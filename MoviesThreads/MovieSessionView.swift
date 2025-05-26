@@ -22,7 +22,7 @@ struct MovieSessionView: View {
                     .fontWeight(.bold)
                     .foregroundColor(session.demonstratorStatus == .exibindo ? .green : .gray)
             }
-
+            
             VStack(alignment: .leading) {
                 Text("Fãs na Simulação:")
                     .font(.headline)
@@ -44,8 +44,8 @@ struct MovieSessionView: View {
                 Text("📋 Log de Eventos:")
                     .font(.headline)
                 ScrollView {
-                    ForEach(session.log.reversed(), id: \.self) { entry in
-                        Text(entry)
+                    ForEach(session.log.reversed()) { entry in // Remova 'id: \.self'
+                        Text(entry.message) // Acesse a propriedade 'message'
                             .font(.title3)
                             .padding(.vertical, 4)
                     }
@@ -59,7 +59,7 @@ struct MovieSessionView: View {
             HStack {
                 Button("➕ Criar Fã") {
                     fanIDGenerator += 1
-                    let fan = Fan(id: "F\(fanIDGenerator)", session: session, snackTime: TimeInterval(5/*Int.random(in: 2...5)*/))
+                    let fan = Fan(id: "F\(fanIDGenerator)", session: session, snackTime: TimeInterval(Int.random(in: 2...5)))
                     session.fans.append(fan)
                     fan.start()
                     
@@ -73,7 +73,8 @@ struct MovieSessionView: View {
     
     func color(for status: FanStatus) -> Color {
         switch status {
-        case .aguardando: return .gray
+        case .aguardando: return .gray // Cor para o fã aguardando fora da sala
+        case .esperando_filme: return .purple // NOVA COR para fã na sala, mas esperando o filme
         case .assistindo: return .blue
         case .lanchando: return .orange
         }
@@ -82,6 +83,7 @@ struct MovieSessionView: View {
     func icon(for status: FanStatus) -> String {
         switch status {
         case .aguardando: return "hourglass"
+        case .esperando_filme: return "chair.fill"
         case .assistindo: return "film"
         case .lanchando: return "fork.knife"
         }

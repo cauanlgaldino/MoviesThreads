@@ -5,7 +5,6 @@
 //  Created by Cauan Lopes Galdino on 16/05/25.
 //
 
-
 import Foundation
 
 class Fan: Thread, Identifiable {
@@ -24,7 +23,7 @@ class Fan: Thread, Identifiable {
     override func main() {
         while alive {
             fanWantsToJoin()
-            
+
             waitForMovieToEnd()
             
             fanGoesToSnack()
@@ -32,39 +31,44 @@ class Fan: Thread, Identifiable {
     }
     
     func fanWantsToJoin() {
-//        status = .aguardando
-        mutex.wait()
-        if moviesVM.fansInSession < moviesVM.capacity {
-            //semadforo com a capacidade para garantir que só entrem x pessoas
-            DispatchQueue.main.async { [unowned self] in
-                moviesVM.fansInSession += 1
-                status = .assistindo
-                moviesVM.log.append("🎟️ Fã \(id) entrou na sala. Total: \(moviesVM.fansInSession)")
-            }
-            if moviesVM.fansInSession < moviesVM.capacity {
-                sessionReady.signal()
-            }
+        roomCapacitySemaphore.wait()
+        
+        mutex.wait() 
+
+        DispatchQueue.main.async { [unowned self] in
+            moviesVM.fansInSession += 1
+            status = .esperando_filme
+            moviesVM.appendLog("🎟️ Fã \(id) entrou na sala. Total: \(moviesVM.fansInSession)")
         }
+        
         mutex.signal()
     }
     
     func waitForMovieToEnd() {
         movieOver.wait()
+        moviesVM.appendLog("🍿 Fã \(id) terminou de assistir o filme.")
     }
     
     func fanGoesToSnack() {
         mutex.wait()
+        
         DispatchQueue.main.async { [unowned self] in
             moviesVM.fansInSession -= 1
-            moviesVM.log.append("🚪 Fã \(id) saiu da sala.")
+            moviesVM.appendLog("🚪 Fã \(id) saiu da sala.")
         }
+        
+        roomCapacitySemaphore.signal()
         mutex.signal()
         
         DispatchQueue.main.async { [unowned self] in
             status = .lanchando
-            moviesVM.log.append("🍿 Fã \(id) está lanchando.")
+            moviesVM.appendLog("🍿 Fã \(id) está lanchando.")
         }
         
         Thread.sleep(forTimeInterval: snackTime)
+        DispatchQueue.main.async { [unowned self] in
+            self.status = .aguardando
+            self.moviesVM.appendLog("✅ Fã \(id) terminou de lanchar e está aguardando para entrar novamente.")
+        }
     }
 }

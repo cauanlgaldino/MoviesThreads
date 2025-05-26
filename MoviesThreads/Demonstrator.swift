@@ -5,7 +5,6 @@
 //  Created by Cauan Lopes Galdino on 16/05/25.
 //
 
-
 import Foundation
 
 class Demonstrator: Thread {
@@ -23,18 +22,25 @@ class Demonstrator: Thread {
     
     func waitUntilRoomFullAndPlayMovie() {
         sessionReady.wait()
+        
         DispatchQueue.main.async { [unowned self] in
             moviesVM.demonstratorStatus = .exibindo
-            moviesVM.log.append("🎬 Demonstrador: Iniciando exibição do filme.")
+            moviesVM.appendLog("🎬 Demonstrador: Iniciando exibição do filme.")
+            for fan in moviesVM.fans {
+                if fan.status == .esperando_filme {
+                    fan.status = .assistindo
+                }
+            }
         }
+        
         Thread.sleep(forTimeInterval: moviesVM.exhibitionTime)
         
         DispatchQueue.main.async { [unowned self] in
             moviesVM.demonstratorStatus = .aguardando
-            moviesVM.log.append("✅ Demonstrador: Filme terminou.")
+            moviesVM.appendLog("✅ Demonstrador: Filme terminou.")
         }
         
-        for _ in 0..<moviesVM.capacity {
+        for _ in 0 ..< moviesVM.capacity {
             movieOver.signal()
         }
     }
