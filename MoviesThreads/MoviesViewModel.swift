@@ -21,7 +21,7 @@ enum DemonstratorStatus: String {
 }
 
 let mutex = DispatchSemaphore(value: 1)
-let sessionReady = DispatchSemaphore(value: 0) demonstrador
+let sessionReady = DispatchSemaphore(value: 0)
 let movieOver = DispatchSemaphore(value: 0)
 var roomCapacitySemaphore: DispatchSemaphore!
 
