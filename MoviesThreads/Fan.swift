@@ -11,7 +11,7 @@ class Fan: Thread, Identifiable {
     let id: String
     let moviesVM: MovieSessionViewModel
     let snackTime: TimeInterval
-    var status: FanStatus = .fila // começa na fila
+    var status: FanStatus = .fila
     var alive = true
     
     init(id: String, session: MovieSessionViewModel, snackTime: TimeInterval) {
@@ -27,17 +27,22 @@ class Fan: Thread, Identifiable {
             
             fanWantsToJoin()
             
-            if alive { watchMovie() }
+            watchMovie()
             
-            if alive { fanGoesToSnack() }
-            
+            fanGoesToSnack()
         }
+        
+        DispatchQueue.main.async { [unowned self] in
+            moviesVM.fans.remove(at: moviesVM.fans.firstIndex(where: { $0.id == self.id })!)
+            moviesVM.appendLog("🗑️ Fã \(self.id) foi removido da lista de simulação.")            
+        }
+        
     }
     
     func fanWantsToJoin() {
         roomCapacitySemaphore.wait()
         
-
+        
         DispatchQueue.main.async { [unowned self] in
             mutex.wait()
             moviesVM.fansInSession += 1
@@ -56,10 +61,10 @@ class Fan: Thread, Identifiable {
         }
         
         let endTime = Date().addingTimeInterval(moviesVM.exhibitionTime)
-        var someValue = 30.0  // Variável para a operação matemática.
+        var someValue = 30.0
         while Date() < endTime {
-                    someValue = sin(someValue)
-                }
+            someValue = sin(someValue)
+        }
         
         movieOver.wait()
         
@@ -85,11 +90,11 @@ class Fan: Thread, Identifiable {
         }
         
         let endTime = Date().addingTimeInterval(snackTime)
-        var someValue = 1.0  // Variável para a operação matemática.
+        var someValue = 30.0
         while Date() < endTime {
-                    someValue = sin(someValue)
-                }
-
+            someValue = sin(someValue)
+        }
+        
         DispatchQueue.main.async { [unowned self] in
             status = .fila
             moviesVM.appendLog("✅ Fã \(id) terminou de lanchar e está aguardando para entrar novamente.")

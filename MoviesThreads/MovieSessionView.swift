@@ -48,7 +48,7 @@ struct MovieSessionView: View {
                                     .font(.title2)
                             }
                             .buttonStyle(.plain)
-                            .disabled(fan.status == .esperando || fan.status == .assistindo)
+                            .disabled(!fan.alive)
                         }
                         .frame(width: geo.size.width * 0.4)
                         

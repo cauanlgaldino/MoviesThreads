@@ -61,20 +61,22 @@ class MovieSessionViewModel: ObservableObject {
     }
     
     func appendLog(_ message: String) {
-        //        DispatchQueue.main.async { [unowned self] in
-        log.append(LogEntry(message: message))
-        //        }
+        DispatchQueue.main.async { [unowned self] in
+            log.append(LogEntry(message: message))
+        }
     }
     
     
     func removeFan(_ fanToRemove: Fan) {
-        fanToRemove.alive = false
-        
-        appendLog("❌ Fã \(fanToRemove.id) está saindo da simulação.")
-        
-        if let index = self.fans.firstIndex(where: { $0.id == fanToRemove.id }) {
-            self.fans.remove(at: index)
-            self.appendLog("🗑️ Fã \(fanToRemove.id) foi removido da lista de simulação.")
+        DispatchQueue.main.async { [unowned self] in
+            fanToRemove.alive = false
+            appendLog("❌ Fã \(fanToRemove.id) vai ser removido da simulação.")
         }
+        
+        
+//        if let index = self.fans.firstIndex(where: { $0.id == fanToRemove.id }) {
+//            self.fans.remove(at: index)
+//            self.appendLog("🗑️ Fã \(fanToRemove.id) foi removido da lista de simulação.")
+//        }
     }
 }
