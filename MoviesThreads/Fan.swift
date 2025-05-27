@@ -24,51 +24,60 @@ class Fan: Thread, Identifiable {
     
     override func main() {
         while alive {
+            
             fanWantsToJoin()
-//            if !alive { break }
             
-            waitForMovieToEnd()
-//            if !alive { break }
+            if alive { watchMovie() }
             
-            fanGoesToSnack()
+            if alive { fanGoesToSnack() }
+            
         }
     }
     
     func fanWantsToJoin() {
         roomCapacitySemaphore.wait()
         
-        mutex.wait() 
 
         DispatchQueue.main.async { [unowned self] in
+            mutex.wait()
             moviesVM.fansInSession += 1
-            status = .esperando_filme
+            status = .esperando
             moviesVM.appendLog("🎟️ Fã \(id) entrou na sala. Total: \(moviesVM.fansInSession)")
+            mutex.signal()
         }
         
-        mutex.signal()
     }
     
-    func waitForMovieToEnd() {
-//        let endTime = Date().addingTimeInterval(moviesVM.exhibitionTime)
-//        var someValue = 100.0  // Variável para a operação matemática.
-//        while Date() < endTime {
-//                    someValue = sin(someValue)
-//                }
+    func watchMovie() {
+        sessionReady.wait()
+        
+        DispatchQueue.main.async { [unowned self] in
+            status = .assistindo
+        }
+        
+        let endTime = Date().addingTimeInterval(moviesVM.exhibitionTime)
+        var someValue = 30.0  // Variável para a operação matemática.
+        while Date() < endTime {
+                    someValue = sin(someValue)
+                }
         
         movieOver.wait()
-        moviesVM.appendLog("🍿 Fã \(id) terminou de assistir o filme.")
+        
+        DispatchQueue.main.async { [unowned self] in
+            moviesVM.appendLog("🍿 Fã \(id) terminou de assistir o filme.")
+        }
     }
     
     func fanGoesToSnack() {
-        mutex.wait()
         
         DispatchQueue.main.async { [unowned self] in
+            mutex.wait()
             moviesVM.fansInSession -= 1
+            roomCapacitySemaphore.signal()
             moviesVM.appendLog("🚪 Fã \(id) saiu da sala.")
+            mutex.signal()
         }
         
-        roomCapacitySemaphore.signal()
-        mutex.signal()
         
         DispatchQueue.main.async { [unowned self] in
             status = .lanchando
@@ -76,7 +85,7 @@ class Fan: Thread, Identifiable {
         }
         
         let endTime = Date().addingTimeInterval(snackTime)
-        var someValue = 100.0  // Variável para a operação matemática.
+        var someValue = 1.0  // Variável para a operação matemática.
         while Date() < endTime {
                     someValue = sin(someValue)
                 }
