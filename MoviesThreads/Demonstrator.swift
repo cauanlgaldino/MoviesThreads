@@ -12,6 +12,8 @@ class Demonstrator: Thread {
     
     init(session: MovieSessionViewModel) {
         self.moviesVM = session
+        super.init()
+        self.name = "Demonstrador"
     }
     
     override func main() {
@@ -25,18 +27,23 @@ class Demonstrator: Thread {
         
         DispatchQueue.main.async { [unowned self] in
             moviesVM.demonstratorStatus = .exibindo
+                    }
             moviesVM.appendLog("🎬 Demonstrador: Iniciando exibição do filme.")
             for fan in moviesVM.fans {
                 if fan.status == .esperando_filme {
                     fan.status = .assistindo
+                    
                 }
             }
-        }
+            let endTime = Date().addingTimeInterval(moviesVM.exhibitionTime)
+        var value = 1.0
+            while Date() < endTime {
+                value = sin(value)
+                    }
         
-        Thread.sleep(forTimeInterval: moviesVM.exhibitionTime)
         
         DispatchQueue.main.async { [unowned self] in
-            moviesVM.demonstratorStatus = .aguardando
+            moviesVM.demonstratorStatus = .waitingFans
             moviesVM.appendLog("✅ Demonstrador: Filme terminou.")
         }
         

@@ -11,20 +11,24 @@ class Fan: Thread, Identifiable {
     let id: String
     let moviesVM: MovieSessionViewModel
     let snackTime: TimeInterval
-    var status: FanStatus = .aguardando
+    var status: FanStatus = .fila // começa na fila
     var alive = true
     
     init(id: String, session: MovieSessionViewModel, snackTime: TimeInterval) {
         self.id = id
         self.moviesVM = session
         self.snackTime = snackTime
+        super.init()
+        self.name = "Fã \(id)"
     }
     
     override func main() {
         while alive {
             fanWantsToJoin()
-
+//            if !alive { break }
+            
             waitForMovieToEnd()
+//            if !alive { break }
             
             fanGoesToSnack()
         }
@@ -45,6 +49,12 @@ class Fan: Thread, Identifiable {
     }
     
     func waitForMovieToEnd() {
+//        let endTime = Date().addingTimeInterval(moviesVM.exhibitionTime)
+//        var someValue = 100.0  // Variável para a operação matemática.
+//        while Date() < endTime {
+//                    someValue = sin(someValue)
+//                }
+        
         movieOver.wait()
         moviesVM.appendLog("🍿 Fã \(id) terminou de assistir o filme.")
     }
@@ -65,10 +75,15 @@ class Fan: Thread, Identifiable {
             moviesVM.appendLog("🍿 Fã \(id) está lanchando.")
         }
         
-        Thread.sleep(forTimeInterval: snackTime)
+        let endTime = Date().addingTimeInterval(snackTime)
+        var someValue = 100.0  // Variável para a operação matemática.
+        while Date() < endTime {
+                    someValue = sin(someValue)
+                }
+
         DispatchQueue.main.async { [unowned self] in
-            self.status = .aguardando
-            self.moviesVM.appendLog("✅ Fã \(id) terminou de lanchar e está aguardando para entrar novamente.")
+            status = .fila
+            moviesVM.appendLog("✅ Fã \(id) terminou de lanchar e está aguardando para entrar novamente.")
         }
     }
 }

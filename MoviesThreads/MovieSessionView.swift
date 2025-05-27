@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MovieSessionView: View {
-    @StateObject private var session = MovieSessionViewModel(capacity: 3, exhibitionTime: 5)
+    @StateObject private var session = MovieSessionViewModel(capacity: 3, exhibitionTime: 30)
     @State private var fanIDGenerator = 0
     
     var body: some View {
@@ -33,6 +33,16 @@ struct MovieSessionView: View {
                         Text(fan.status.rawValue)
                             .foregroundColor(color(for: fan.status))
                         Image(systemName: icon(for: fan.status))
+                        
+//                        Botão para remover este fã específico
+                        Button {
+                            session.removeFan(fan)
+                        } label: {
+                            Image(systemName: "minus.circle.fill")
+                                .foregroundColor(.red)
+                                .font(.title2)
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
             }
@@ -44,8 +54,8 @@ struct MovieSessionView: View {
                 Text("📋 Log de Eventos:")
                     .font(.headline)
                 ScrollView {
-                    ForEach(session.log.reversed()) { entry in // Remova 'id: \.self'
-                        Text(entry.message) // Acesse a propriedade 'message'
+                    ForEach(session.log.reversed()) { entry in
+                        Text(entry.message)
                             .font(.title3)
                             .padding(.vertical, 4)
                     }
@@ -59,13 +69,12 @@ struct MovieSessionView: View {
             HStack {
                 Button("➕ Criar Fã") {
                     fanIDGenerator += 1
-                    let fan = Fan(id: "F\(fanIDGenerator)", session: session, snackTime: TimeInterval(Int.random(in: 2...5)))
+                    let fan = Fan(id: "F\(fanIDGenerator)", session: session, snackTime: TimeInterval(Int.random(in: 10...20)))
                     session.fans.append(fan)
                     fan.start()
                     
                 }
                 .buttonStyle(.borderedProminent)
-                
             }
         }
         .padding()
@@ -73,8 +82,8 @@ struct MovieSessionView: View {
     
     func color(for status: FanStatus) -> Color {
         switch status {
-        case .aguardando: return .gray // Cor para o fã aguardando fora da sala
-        case .esperando_filme: return .purple // NOVA COR para fã na sala, mas esperando o filme
+        case .fila: return .gray
+        case .esperando_filme: return .purple
         case .assistindo: return .blue
         case .lanchando: return .orange
         }
@@ -82,7 +91,7 @@ struct MovieSessionView: View {
     
     func icon(for status: FanStatus) -> String {
         switch status {
-        case .aguardando: return "hourglass"
+        case .fila: return "hourglass"
         case .esperando_filme: return "chair.fill"
         case .assistindo: return "film"
         case .lanchando: return "fork.knife"
