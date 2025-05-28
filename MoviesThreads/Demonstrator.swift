@@ -10,8 +10,8 @@ import Foundation
 class Demonstrator: Thread {
     let moviesVM: MovieSessionViewModel
     
-    init(session: MovieSessionViewModel) {
-        self.moviesVM = session
+    init(moviesVM: MovieSessionViewModel) {
+        self.moviesVM = moviesVM
         super.init()
         self.name = "Demonstrador"
     }
