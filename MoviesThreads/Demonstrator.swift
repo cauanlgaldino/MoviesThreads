@@ -27,27 +27,22 @@ class Demonstrator: Thread {
         
         DispatchQueue.main.async { [unowned self] in
             moviesVM.demonstratorStatus = .exibindo
-                    }
             moviesVM.appendLog("🎬 Demonstrador: Iniciando exibição do filme.")
-            for fan in moviesVM.fans {
-                if fan.status == .esperando_filme {
-                    fan.status = .assistindo
-                    
-                }
-            }
-            let endTime = Date().addingTimeInterval(moviesVM.exhibitionTime)
-        var value = 1.0
-            while Date() < endTime {
-                value = sin(value)
-                    }
+        }
+        
+        let endTime = Date().addingTimeInterval(moviesVM.exhibitionTime)
+        var value = 30.0
+        while Date() < endTime {
+            value = sin(value)
+        }
         
         
         DispatchQueue.main.async { [unowned self] in
-            moviesVM.demonstratorStatus = .waitingFans
+            moviesVM.demonstratorStatus = .aguardandoFas
             moviesVM.appendLog("✅ Demonstrador: Filme terminou.")
         }
         
-        for _ in 0 ..< moviesVM.capacity {
+        for _ in 0..<moviesVM.capacity {
             movieOver.signal()
         }
     }

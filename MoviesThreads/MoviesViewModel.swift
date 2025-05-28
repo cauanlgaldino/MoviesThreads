@@ -10,13 +10,13 @@ import Combine
 
 enum FanStatus: String {
     case fila = "Na Fila" // Fora da sala, esperando para tentar entrar
-    case esperando_filme = "Esperando Filme" // Entrou na sala, mas o filme não começou
+    case esperando = "Esperando Filme" // Entrou na sala, mas o filme não começou
     case assistindo = "Assistindo"
     case lanchando = "Lanchando"
 }
 
 enum DemonstratorStatus: String {
-    case waitingFans = "Aguardando Fãs"
+    case aguardandoFas = "Aguardando Fãs"
     case exibindo = "Exibindo Filme"
 }
 
@@ -34,12 +34,16 @@ class MovieSessionViewModel: ObservableObject {
     let capacity: Int
     let exhibitionTime: TimeInterval
     
-    @Published var demonstratorStatus: DemonstratorStatus = .waitingFans
+    @Published var demonstratorStatus: DemonstratorStatus = .aguardandoFas
     @Published var fansInSession: Int = 0 {
         didSet {
             if fansInSession == capacity {
-                sessionReady.signal()
+                DispatchQueue.main.async { [unowned self] in
                     appendLog("✅ Sala cheia! Sinalizando o demonstrador para iniciar o filme.")
+                }
+                for _ in 0 ..< capacity+1 {
+                    sessionReady.signal()
+                }
             }
         }
     }
@@ -58,19 +62,21 @@ class MovieSessionViewModel: ObservableObject {
     
     func appendLog(_ message: String) {
         DispatchQueue.main.async { [unowned self] in
-            self.log.append(LogEntry(message: message))
+            log.append(LogEntry(message: message))
         }
     }
     
     
     func removeFan(_ fanToRemove: Fan) {
+        DispatchQueue.main.async { [unowned self] in
             fanToRemove.alive = false
-           
-            appendLog("❌ Fã \(fanToRemove.id) está saindo da simulação.")
-            
-            if let index = self.fans.firstIndex(where: { $0.id == fanToRemove.id }) {
-                self.fans.remove(at: index)
-                self.appendLog("🗑️ Fã \(fanToRemove.id) foi removido da lista de simulação.")
-            }
+            appendLog("❌ Fã \(fanToRemove.id) vai ser removido da simulação.")
+        }
+        
+        
+//        if let index = self.fans.firstIndex(where: { $0.id == fanToRemove.id }) {
+//            self.fans.remove(at: index)
+//            self.appendLog("🗑️ Fã \(fanToRemove.id) foi removido da lista de simulação.")
+//        }
     }
 }
