@@ -6,13 +6,49 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXCopyFilesBuildPhase section */
+		2E7607B02DE7A85400A0078D /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Font;
+			dstSubfolderSpec = 7;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		E7A9E68F2DD41BDA0008B032 /* MoviesThreads.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MoviesThreads.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		2E7607AB2DE799F600A0078D /* Exceptions for "MoviesThreads" folder in "MoviesThreads" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = E7A9E68E2DD41BDA0008B032 /* MoviesThreads */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		2E7607B22DE7A86900A0078D /* Exceptions for "MoviesThreads" folder in "Copy Files" phase from "MoviesThreads" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = 2E7607B02DE7A85400A0078D /* CopyFiles */;
+			membershipExceptions = (
+				"Font/PixelifySans-VariableFont_wght.ttf",
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		E7A9E6912DD41BDA0008B032 /* MoviesThreads */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				2E7607AB2DE799F600A0078D /* Exceptions for "MoviesThreads" folder in "MoviesThreads" target */,
+				2E7607B22DE7A86900A0078D /* Exceptions for "MoviesThreads" folder in "Copy Files" phase from "MoviesThreads" target */,
+			);
 			path = MoviesThreads;
 			sourceTree = "<group>";
 		};
@@ -55,6 +91,7 @@
 				E7A9E68B2DD41BDA0008B032 /* Sources */,
 				E7A9E68C2DD41BDA0008B032 /* Frameworks */,
 				E7A9E68D2DD41BDA0008B032 /* Resources */,
+				2E7607B02DE7A85400A0078D /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -257,6 +294,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MoviesThreads/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -284,6 +322,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MoviesThreads/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
