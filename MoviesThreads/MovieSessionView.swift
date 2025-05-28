@@ -6,10 +6,24 @@
 //
 
 import SwiftUI
+import Combine
+
+import SwiftUI
 
 struct MovieSessionView: View {
-    @StateObject private var session = MovieSessionViewModel(capacity: 3, exhibitionTime: 10)
+    let initialCapacity: Int
+    let initialExhibitionTime: Int
+
+    @ObservedObject private var session: MovieSessionViewModel
+
     @State private var fanIDGenerator = 0
+
+    init(capacity: Int, exibitionTime: Int) {
+        self.initialCapacity = capacity
+        self.initialExhibitionTime = exibitionTime
+        session = MovieSessionViewModel(capacity: capacity, exhibitionTime: exibitionTime)
+    }
+
     
     var body: some View {
         GeometryReader { geo in
@@ -63,12 +77,16 @@ struct MovieSessionView: View {
                         .font(.headline)
                     ScrollView {
                         ForEach(session.log.reversed()) { entry in
-                            Text(entry.message)
+                            Text(
+                                """
+                                \(entry.message)
+                                """)
                                 .font(.title3)
                                 .padding(.vertical, 4)
                                 .multilineTextAlignment(.leading)
                         }
                     }
+                    
                     
                 }
                 .padding()
@@ -89,6 +107,7 @@ struct MovieSessionView: View {
             .padding(20)
             .frame(width: geo.size.width, height: geo.size.height)
         }
+        .navigationBarBackButtonHidden(true)
     }
     
     func color(for status: FanStatus) -> Color {
@@ -111,5 +130,6 @@ struct MovieSessionView: View {
 }
 
 #Preview {
-    MovieSessionView()
+    MovieSessionView(capacity: 3, exibitionTime: 6)
 }
+

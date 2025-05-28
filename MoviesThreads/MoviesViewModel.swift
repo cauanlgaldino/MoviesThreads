@@ -31,8 +31,8 @@ struct LogEntry: Identifiable, Hashable {
 }
 
 class MovieSessionViewModel: ObservableObject {
-    let capacity: Int
-    let exhibitionTime: TimeInterval
+    @Published var capacity: Int = 0
+    @Published var exhibitionTime: TimeInterval = 0
     
     @Published var demonstratorStatus: DemonstratorStatus = .aguardandoFas
     @Published var fansInSession: Int = 0 {
@@ -50,13 +50,13 @@ class MovieSessionViewModel: ObservableObject {
     @Published var fans: [Fan] = []
     @Published var log: [LogEntry] = []
     
-    init(capacity: Int, exhibitionTime: TimeInterval) {
+    init(capacity: Int, exhibitionTime: Int) {
         self.capacity = capacity
-        self.exhibitionTime = exhibitionTime
+        self.exhibitionTime = TimeInterval(exhibitionTime)
         
         roomCapacitySemaphore = DispatchSemaphore(value: capacity)
         
-        let demonstrator = Demonstrator(session: self)
+        let demonstrator = Demonstrator(moviesVM: self)
         demonstrator.start()
     }
     
