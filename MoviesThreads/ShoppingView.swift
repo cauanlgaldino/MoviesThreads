@@ -11,6 +11,8 @@ import Foundation
 struct ShoppingView: View {
     @StateObject var session = MovieSessionViewModel(capacity: 3, exhibitionTime: 30)
     @State private var fanIDGenerator = 0
+    @State private var chairPositions: [CGPoint] = []
+
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -18,7 +20,6 @@ struct ShoppingView: View {
                     .resizable()
                     .scaledToFill()
                     .frame(width: geometry.size.width)
-
 
                 VStack(spacing: 0) {
                     Image(.pele)
@@ -33,14 +34,37 @@ struct ShoppingView: View {
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: geometry.size.width/12)
+                                .background(
+                                            GeometryReader { geo in
+                                                Color.clear
+                                                    .onAppear {
+                                                        let origin = geo.frame(in: .global).origin
+                                                        DispatchQueue.main.async {
+                                                            chairPositions.append(origin)
+                                                        }
+                                                    }
+                                            }
+                                        )
                         }
                     }
+
                     HStack {
-                        ForEach(0..<6) { _ in
+                        ForEach(5..<11) { _ in
                             Image(.chairBrown)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: geometry.size.width/12)
+                                .background(
+                                            GeometryReader { geo in
+                                                Color.clear
+                                                    .onAppear {
+                                                        let origin = geo.frame(in: .global).origin
+                                                        DispatchQueue.main.async {
+                                                            chairPositions.append(origin)
+                                                        }
+                                                    }
+                                            }
+                                        )
 
                         }
                     }
@@ -61,7 +85,21 @@ struct ShoppingView: View {
                         .opacity(0.8)
                 }
                 .frame(maxHeight: .infinity, alignment: .top)
-//                .offset(x: -geometry.frame(in: .local).midX * 0.1)
+
+                VStack(spacing: -geometry.size.height/10) {
+                    Image(.barracaNova)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: geometry.size.width/6, height: geometry.size.height/2)
+                        .padding(.top, -geometry.size.height/20)
+
+                    Image(.barracaNova)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: geometry.size.width/6, height: geometry.size.height/2)
+
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
 
                 // so pra saber onde fica os logs
                 HStack {
@@ -72,8 +110,35 @@ struct ShoppingView: View {
                 }
                 .frame(height: geometry.size.height * 0.2)
                 .frame(maxHeight: .infinity, alignment: .bottom)
+
+                Image(.provisorio)
+
+            }
+            .onAppear {
+                printChairsPosition()
             }
         }
+    }
+
+    func printChairsPosition() {
+        var chairCounter: Int = 0
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            for chairPosition in chairPositions.reversed() {
+                if chairPosition.y < 342 {
+                    chairCounter+=1
+                    print("\(chairCounter): \(chairPosition)")
+
+                } else {
+                    chairCounter+=1
+                    print("\(chairCounter): \(chairPosition)")
+                }
+
+            }
+        }
+    }
+
+    func getChairPosition() {
+        
     }
 }
 
