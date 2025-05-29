@@ -166,6 +166,9 @@ struct ShoppingView: View {
                     if !moviesVM.fans.isEmpty {
                         ForEach(moviesVM.fans) { fan in
                             FanView(fan: fan, size: geometry.size)
+                        }
+                    }
+                }
                 // fila para o cinema
                 HStack {
                     VStack(alignment: .leading) {
