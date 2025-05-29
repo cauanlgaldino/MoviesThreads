@@ -9,8 +9,9 @@ import SwiftUI
 import Foundation
 
 struct ShoppingView: View {
-    @StateObject var session = MovieSessionViewModel(capacity: 3, exhibitionTime: 30)
+    @StateObject var moviesVM = MovieSessionViewModel(capacity: 3, exhibitionTime: 30)
     @State private var fanIDGenerator = 0
+    @State private var showingCreateFanSheet = false
 //    @ObservedObject var moviesVM: MovieSessionViewModel
     var body: some View {
         GeometryReader { geometry in
@@ -19,22 +20,38 @@ struct ShoppingView: View {
                     .resizable()
                     .scaledToFill()
                 
+                if !moviesVM.fans.isEmpty {
+                    ForEach(moviesVM.fans) { fan in
+                        VStack {
+                            FanView(fan: fan, size: geometry.size)
+                        }
+                    }
+                }
+                
                 ScreenView(size: geometry.size)
-                LogsView(size: geometry.size, logs: .constant(session.log))
+                LogsView(size: geometry.size, logs: .constant(moviesVM.log))
                 DoorView(size: geometry.size)
                 ProjectorView(size: geometry.size)
                 SeatsView(size: geometry.size)
                 HStack {
-//                    Button("➕ Criar Fã") {
-//                        fanIDGenerator += 1
-//                        let newFan = Fan(id: moviesVM.fans[0].id, snackTime: Int(moviesVM.fans[0].snackTime), moviesVM: moviesVM)
-//                        session.fans.append(newFan)
-//                        newFan.start()
-//                        
-//                    }
-//                    .buttonStyle(.borderedProminent)
+                    Button("➕ Criar Fã") {
+                    showingCreateFanSheet = true
+                }
+                .buttonStyle(.borderedProminent)
                 }
             }
+            .sheet(isPresented: $showingCreateFanSheet) {
+                            CreateFanWindowView(
+                                // 4. Passamos o Binding para availableFanNames do moviesVM
+                                moviesVM: moviesVM, onAddFan: { fanID, snackTimeInt in
+                                    let newFan = Fan(id: fanID, snackTime: snackTimeInt, moviesVM: moviesVM)
+                                    moviesVM.fans.append(newFan)
+                                    newFan.start()
+                                    // 5. Chamamos o método do ViewModel para marcar o nome como usado
+                                    moviesVM.markFanNameAsUsed(fanID)
+                                }
+                            )
+                        }
         }
     }
 }

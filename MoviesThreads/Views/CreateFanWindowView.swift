@@ -92,8 +92,8 @@ struct CreateFanWindowView: View {
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
-        NavigationView {
-            Group {
+//        NavigationView {
+//            Group {
                 VStack {
                     // 3. Picker para escolher o nome do fã
                     VStack(alignment: .leading) {
@@ -145,7 +145,7 @@ struct CreateFanWindowView: View {
 //                    .disabled(selectedFanName.isEmpty || snackTime <= 0)
                 }
                 .padding(.vertical)
-            }
+//            }
 //            .padding()
             .navigationTitle("Novo Fã")
 //            .navigationBarTitleDisplayMode(.inline)
@@ -172,7 +172,7 @@ struct CreateFanWindowView: View {
                     .disabled(selectedFanName.isEmpty || snackTime <= 0)
                 }
             }
-        }
+//        }
     }
 }
 //

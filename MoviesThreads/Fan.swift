@@ -7,12 +7,13 @@
 
 import Foundation
 
-class Fan: Thread, Identifiable {
+class Fan: Thread, Identifiable, ObservableObject {
     let id: String
     let moviesVM: MovieSessionViewModel
     let snackTime: TimeInterval
-    var status: FanStatus = .fila
+    @Published var status: FanStatus = .fila
     var alive = true
+    @Published var startEndTime = Date()
     
     init(id: String, snackTime: Int, moviesVM: MovieSessionViewModel) {
         self.id = id
@@ -83,8 +84,10 @@ class Fan: Thread, Identifiable {
             mutex.signal()
         }
         
+        let newStartEndTime = Date().addingTimeInterval(snackTime)
         
         DispatchQueue.main.async { [unowned self] in
+            startEndTime = newStartEndTime
             status = .lanchando
             moviesVM.appendLog("🍿 \(id) está lanchando.")
         }
