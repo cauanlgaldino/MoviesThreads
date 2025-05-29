@@ -19,6 +19,7 @@ struct ShoppingView: View {
     @State private var chairPositions: [Int : CGPoint] = [:]
     @State private var burguerPositions: [Int : CGPoint] = [:]
     @State var beingEated: [Bool] = Array(repeating: false, count: 10)
+    @State private var queuePositions: [Int : CGPoint] = [:]
     
     init(capacity: Int, exibitionTime: Int) {
         self.initialCapacity = capacity
@@ -161,6 +162,51 @@ struct ShoppingView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
                 
+                // fila para o cinema
+                HStack {
+                    VStack(alignment: .leading) {
+                        ForEach(5..<10, id: \.self) { index in
+                            Rectangle()
+                                .fill(.black)
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: geometry.size.width/13)
+                                .background(
+                                    GeometryReader { geo in
+                                        Color.clear
+                                            .onAppear {
+                                                let origin = geo.frame(in: .global).origin
+                                                DispatchQueue.main.async {
+                                                    queuePositions[index + 1] = origin
+                                                }
+                                            }
+                                    }
+                                )
+                        }
+                    }
+                    
+                    VStack(alignment: .leading) {
+                        ForEach(0..<5, id: \.self) { index in
+                            Rectangle()
+                                .fill(.black)
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: geometry.size.width/13)
+                                .background(
+                                    GeometryReader { geo in
+                                        Color.clear
+                                            .onAppear {
+                                                let origin = geo.frame(in: .global).origin
+                                                DispatchQueue.main.async {
+                                                    queuePositions[index + 1] = origin
+                                                }
+                                            }
+                                    }
+                                )
+                        }
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                .padding(.leading, +geometry.size.width/20)
+                
                 // so pra saber onde fica os logs
                 HStack {
                     Rectangle()
@@ -234,6 +280,22 @@ struct ShoppingView: View {
             }
         }
         
+    }
+    
+    func printQueuePosition() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            let sortedKeys = queuePositions.keys.sorted()
+            for key in sortedKeys {
+                if let position = queuePositions[key] {
+                    print("Queue \(key): \(position)")
+                }
+            }
+        }
+        
+    }
+    
+    func getQueuePosition(of queueCount: Int) -> CGPoint? {
+        return queuePositions[queueCount]
     }
     
     func getChairPosition(of chairCount: Int) -> CGPoint? {
