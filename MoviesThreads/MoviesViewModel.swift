@@ -9,8 +9,8 @@ import Foundation
 import Combine
 
 enum FanStatus: String {
-    case fila = "Na Fila" // Fora da sala, esperando para tentar entrar
-    case esperando = "Esperando Filme" // Entrou na sala, mas o filme não começou
+    case fila = "Na Fila"
+    case esperando = "Esperando Filme"
     case assistindo = "Assistindo"
     case lanchando = "Lanchando"
 }
