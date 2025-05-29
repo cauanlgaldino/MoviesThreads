@@ -12,7 +12,8 @@ struct MoviesThreadsApp: App {
     var body: some Scene {
         WindowGroup {
 //            MovieSessionView()
-            ShoppingView()
+        //    ShoppingView()
+            GlobalWindowView()
         }
     }
 }
