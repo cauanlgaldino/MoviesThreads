@@ -11,11 +11,23 @@ import Foundation
 
 
 struct ShoppingView: View {
-    @StateObject var session = MovieSessionViewModel(capacity: 3, exhibitionTime: 30)
-    @State private var fanIDGenerator = 0
+    let initialCapacity: Int
+    let initialExhibitionTime: Int
+    
+    @ObservedObject var moviesVM: MovieSessionViewModel
+    
+    @State private var showingCreateFanSheet = false
+    
     @State private var chairPositions: [Int : CGPoint] = [:]
     @State private var burguerPositions: [Int : CGPoint] = [:]
     @State var beingEated: [Bool] = Array(repeating: false, count: 10)
+    
+    init(capacity: Int, exibitionTime: Int) {
+        self.initialCapacity = capacity
+        self.initialExhibitionTime = exibitionTime
+        self.moviesVM = MovieSessionViewModel(capacity: capacity, exhibitionTime: exibitionTime)
+    }
+    
 
     var body: some View {
         GeometryReader { geometry in
@@ -73,6 +85,10 @@ struct ShoppingView: View {
                     }
                 }
                 .padding().padding()
+                Button("➕ Adicionar Fã") {
+                    showingCreateFanSheet = true
+                }
+                .buttonStyle(.borderedProminent)
                 .background {
                     UnevenRoundedRectangle(topLeadingRadius: 0, bottomLeadingRadius: 16, bottomTrailingRadius: 16, topTrailingRadius: 0)
                         .foregroundStyle(.theater)
@@ -158,45 +174,48 @@ struct ShoppingView: View {
                 }
                 .frame(height: geometry.size.height * 0.2)
                 .frame(maxHeight: .infinity, alignment: .bottom)
-
-
             }
-            .onAppear {
-                printChairsPosition()
-            }
+            .sheet(isPresented: $showingCreateFanSheet) {
+                            CreateFanWindowView(
+                                moviesVM: moviesVM, onAddFan: { fanID, snackTimeInt in
+                                    let newFan = Fan(id: fanID, snackTime: snackTimeInt, moviesVM: moviesVM)
+                                    moviesVM.fans.append(newFan)
+                                    newFan.start()
+                                    moviesVM.markFanNameAsUsed(fanID)
+                                }
+                            )
+                        }
         }
-    }
+        .navigationBarBackButtonHidden(true)
+        
+        func printChairsPosition() {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    let sortedKeys = chairPositions.keys.sorted()
+                    for key in sortedKeys {
+                        if let position = chairPositions[key] {
+                            print("Chair \(key): \(position)")
+                        }
+                    }
+                }
+            }
 
-    func printChairsPosition() {
+        func printBurguerPosition() {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                let sortedKeys = chairPositions.keys.sorted()
+                let sortedKeys = burguerPositions.keys.sorted()
                 for key in sortedKeys {
-                    if let position = chairPositions[key] {
+                    if let position = burguerPositions[key] {
                         print("Chair \(key): \(position)")
                     }
                 }
             }
+
         }
 
-    func printBurguerPosition() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            let sortedKeys = burguerPositions.keys.sorted()
-            for key in sortedKeys {
-                if let position = burguerPositions[key] {
-                    print("Chair \(key): \(position)")
-                }
+        func getChairPosition(of chairCount: Int) -> CGPoint? {
+                return chairPositions[chairCount]
             }
-        }
-
     }
-
-    func getChairPosition(of chairCount: Int) -> CGPoint? {
-            return chairPositions[chairCount]
-        }
-
-
-}
-
+    
 struct LayoutConstants {
     static let screenWidthRatio: CGFloat = 0.55
     static let screenHeightRatio: CGFloat = 0.64
@@ -213,8 +232,7 @@ struct LayoutConstants {
 }
 
 #Preview {
-    ShoppingView()
-        .frame(width: 1512, height: 982)
+    ShoppingView(capacity: 3, exibitionTime: 10)
 
 }
 
