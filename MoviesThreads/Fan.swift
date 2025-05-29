@@ -35,6 +35,7 @@ class Fan: Thread, Identifiable, ObservableObject {
         
         DispatchQueue.main.async { [unowned self] in
             moviesVM.fans.remove(at: moviesVM.fans.firstIndex(where: { $0.id == self.id })!)
+            moviesVM.availableNames.append(id)
             moviesVM.appendLog("🗑️ \(self.id) foi removido da lista de simulação.")
         }
         

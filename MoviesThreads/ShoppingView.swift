@@ -8,52 +8,193 @@
 import SwiftUI
 import Foundation
 
+
+
 struct ShoppingView: View {
     @StateObject var moviesVM = MovieSessionViewModel(capacity: 3, exhibitionTime: 30)
     @State private var fanIDGenerator = 0
-    @State private var showingCreateFanSheet = false
-//    @ObservedObject var moviesVM: MovieSessionViewModel
+    @State private var chairPositions: [Int : CGPoint] = [:]
+    @State private var burguerPositions: [Int : CGPoint] = [:]
+    @State var beingEated: [Bool] = Array(repeating: false, count: 10)
+
     var body: some View {
         GeometryReader { geometry in
-            ZStack(alignment: .topLeading) {
+            ZStack {
                 Image("Background")
                     .resizable()
                     .scaledToFill()
-                
-                if !moviesVM.fans.isEmpty {
-                    ForEach(moviesVM.fans) { fan in
-                        VStack {
-                            FanView(fan: fan, size: geometry.size)
+                    .frame(width: geometry.size.width)
+
+                VStack(spacing: 0) {
+                    Image(.pele)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: geometry.size.width/3)
+                        .padding()
+
+                    HStack {
+                        ForEach(0..<5, id: \.self) { index in
+                            Image(.chairBrown)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: geometry.size.width/12)
+                                .background(
+                                    GeometryReader { geo in
+                                        Color.clear
+                                            .onAppear {
+                                                let origin = geo.frame(in: .global).origin
+                                                DispatchQueue.main.async {
+                                                    chairPositions[index + 1] = origin
+                                                }
+                                            }
+                                    }
+                                )
+                        }
+                    }
+
+                    HStack {
+                        ForEach(5..<11, id: \.self) { index in
+                            Image(.chairBrown)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: geometry.size.width/12)
+                                .background(
+                                    GeometryReader { geo in
+                                        Color.clear
+                                            .onAppear {
+                                                let origin = geo.frame(in: .global).origin
+                                                DispatchQueue.main.async {
+                                                    chairPositions[index + 1] = origin
+                                                }
+                                            }
+                                    }
+                                )
                         }
                     }
                 }
-                
-                ScreenView(size: geometry.size)
-                LogsView(size: geometry.size, logs: .constant(moviesVM.log))
-                DoorView(size: geometry.size)
-                ProjectorView(size: geometry.size)
-                SeatsView(size: geometry.size)
-                HStack {
-                    Button("➕ Criar Fã") {
-                    showingCreateFanSheet = true
-                }
-                .buttonStyle(.borderedProminent)
-                }
-            }
-            .sheet(isPresented: $showingCreateFanSheet) {
-                            CreateFanWindowView(
-                                // 4. Passamos o Binding para availableFanNames do moviesVM
-                                moviesVM: moviesVM, onAddFan: { fanID, snackTimeInt in
-                                    let newFan = Fan(id: fanID, snackTime: snackTimeInt, moviesVM: moviesVM)
-                                    moviesVM.fans.append(newFan)
-                                    newFan.start()
-                                    // 5. Chamamos o método do ViewModel para marcar o nome como usado
-                                    moviesVM.markFanNameAsUsed(fanID)
-                                }
-                            )
+                .padding().padding()
+                .background {
+                    UnevenRoundedRectangle(topLeadingRadius: 0, bottomLeadingRadius: 16, bottomTrailingRadius: 16, topTrailingRadius: 0)
+                        .foregroundStyle(.theater)
+                        .overlay {
+                            Image(.movieTheater)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
                         }
+                }
+                .overlay {
+                    UnevenRoundedRectangle(topLeadingRadius: 0, bottomLeadingRadius: 16, bottomTrailingRadius: 16, topTrailingRadius: 0)
+                        .strokeBorder(Color.white, lineWidth: 6)
+                        .opacity(0.8)
+                }
+                .frame(maxHeight: .infinity, alignment: .top)
+
+                // barracas
+                HStack {
+                    // area disponivel pra os fas
+                    VStack {
+                        Rectangle()
+                            .frame(width: geometry.size.height * 0.1, height: geometry.size.height * 0.77)
+                    }
+                    .padding(.trailing, -32)
+                    .padding(.top, -48)
+                    .overlay {
+                        Image(.provisorio)
+                    }
+
+                    VStack(spacing: -geometry.size.height/10) {
+                        Image(.barracaNova)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: geometry.size.width/6, height: geometry.size.height/2)
+                            .overlay {
+                                VStack(spacing: geometry.size.height/30) {
+                                    ForEach(0..<5, id: \.self) { index in
+                                        Image(.burgue)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: geometry.size.width/20)
+                                            .background {
+                                                Image(.batataFrita)
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fit)
+                                                    .offset(x: 30, y: -15)
+                                            }
+                                            .background(
+                                                GeometryReader { geo in
+                                                    Color.clear
+                                                        .onAppear {
+                                                            let origin = geo.frame(in: .global).origin
+                                                            DispatchQueue.main.async {
+                                                                chairPositions[index + 1] = origin
+                                                            }
+                                                        }
+                                                }
+                                            )
+                                    }
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+
+                            }
+                            .padding(.top, -geometry.size.height/20)
+
+
+                        Image(.barracaNova)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: geometry.size.width/6, height: geometry.size.height/2)
+                        
+                    }
+
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+
+                // so pra saber onde fica os logs
+                HStack {
+                    Rectangle()
+                    Rectangle()
+                    Rectangle()
+
+                }
+                .frame(height: geometry.size.height * 0.2)
+                .frame(maxHeight: .infinity, alignment: .bottom)
+
+
+            }
+            .onAppear {
+                printChairsPosition()
+            }
         }
     }
+
+    func printChairsPosition() {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                let sortedKeys = chairPositions.keys.sorted()
+                for key in sortedKeys {
+                    if let position = chairPositions[key] {
+                        print("Chair \(key): \(position)")
+                    }
+                }
+            }
+        }
+
+    func printBurguerPosition() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            let sortedKeys = burguerPositions.keys.sorted()
+            for key in sortedKeys {
+                if let position = burguerPositions[key] {
+                    print("Chair \(key): \(position)")
+                }
+            }
+        }
+
+    }
+
+    func getChairPosition(of chairCount: Int) -> CGPoint? {
+            return chairPositions[chairCount]
+        }
+
+
 }
 
 struct LayoutConstants {
@@ -69,6 +210,12 @@ struct LayoutConstants {
     static let seatHeightRatio: CGFloat = 0.14
     static let theaterHeightRatio: CGFloat = 0.8
     static let theaterWidthRatio: CGFloat = 0.55
+}
+
+#Preview {
+    ShoppingView()
+        .frame(width: 1512, height: 982)
+
 }
 
 
