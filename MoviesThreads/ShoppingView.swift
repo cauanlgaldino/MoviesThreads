@@ -161,6 +161,14 @@ struct ShoppingView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
                 
+                VStack {
+                    if !moviesVM.fans.isEmpty {
+                        ForEach(moviesVM.fans) { fan in
+                            FanView(fan: fan, size: geometry.size)
+                        }
+                    }
+                }
+                
                 // so pra saber onde fica os logs
                 HStack {
                     Rectangle()
