@@ -11,29 +11,67 @@ import Foundation
 struct ShoppingView: View {
     @StateObject var session = MovieSessionViewModel(capacity: 3, exhibitionTime: 30)
     @State private var fanIDGenerator = 0
-//    @ObservedObject var moviesVM: MovieSessionViewModel
     var body: some View {
         GeometryReader { geometry in
-            ZStack(alignment: .topLeading) {
+            ZStack {
                 Image("Background")
                     .resizable()
                     .scaledToFill()
-                
-                ScreenView(size: geometry.size)
-                LogsView(size: geometry.size, logs: .constant(session.log))
-                DoorView(size: geometry.size)
-                ProjectorView(size: geometry.size)
-                SeatsView(size: geometry.size)
-                HStack {
-//                    Button("➕ Criar Fã") {
-//                        fanIDGenerator += 1
-//                        let newFan = Fan(id: moviesVM.fans[0].id, snackTime: Int(moviesVM.fans[0].snackTime), moviesVM: moviesVM)
-//                        session.fans.append(newFan)
-//                        newFan.start()
-//                        
-//                    }
-//                    .buttonStyle(.borderedProminent)
+                    .frame(width: geometry.size.width)
+
+
+                VStack(spacing: 0) {
+                    Image(.pele)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: geometry.size.width/3)
+                        .padding()
+
+                    HStack {
+                        ForEach(0..<5) { _ in
+                            Image(.chairBrown)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: geometry.size.width/12)
+                        }
+                    }
+                    HStack {
+                        ForEach(0..<6) { _ in
+                            Image(.chairBrown)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: geometry.size.width/12)
+
+                        }
+                    }
                 }
+                .padding().padding()
+                .background {
+                    UnevenRoundedRectangle(topLeadingRadius: 0, bottomLeadingRadius: 16, bottomTrailingRadius: 16, topTrailingRadius: 0)
+                        .foregroundStyle(.theater)
+                        .overlay {
+                            Image(.movieTheater)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                        }
+                }
+                .overlay {
+                    UnevenRoundedRectangle(topLeadingRadius: 0, bottomLeadingRadius: 16, bottomTrailingRadius: 16, topTrailingRadius: 0)
+                        .strokeBorder(Color.white, lineWidth: 6)
+                        .opacity(0.8)
+                }
+                .frame(maxHeight: .infinity, alignment: .top)
+//                .offset(x: -geometry.frame(in: .local).midX * 0.1)
+
+                // so pra saber onde fica os logs
+                HStack {
+                    Rectangle()
+                    Rectangle()
+                    Rectangle()
+
+                }
+                .frame(height: geometry.size.height * 0.2)
+                .frame(maxHeight: .infinity, alignment: .bottom)
             }
         }
     }
@@ -52,6 +90,12 @@ struct LayoutConstants {
     static let seatHeightRatio: CGFloat = 0.14
     static let theaterHeightRatio: CGFloat = 0.8
     static let theaterWidthRatio: CGFloat = 0.55
+}
+
+#Preview {
+    ShoppingView()
+        .frame(width: 1512, height: 982)
+
 }
 
 
