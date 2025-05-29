@@ -47,17 +47,22 @@ struct FanView: View {
     }
     
     func getTimeLeft(fan: Fan) -> Int {
-            var timeLeft: TimeInterval = 0
+        var timeLeft: TimeInterval = 0
         
-        if fan.status == .lanchando {
+        switch fan.status {
+        case .lanchando:
             timeLeft = fan.endSnackTime.timeIntervalSince(now)
-        } else if fan.status == .assistindo {
-            // Exemplo de cálculo do tempo restante do filme (se ativar)
-            // let elapsed = Date().timeIntervalSince(fan.startMovieTime)
-            // timeLeft = fan.moviesVM.exhibitionTime - elapsed
+        case .assistindo:
+            timeLeft = fan.endMovieTime.timeIntervalSince(now)
+        default:
+            timeLeft = now.timeIntervalSince(fan.waitingTime) // tempo crescente
         }
         
-        return Int(max(ceil(timeLeft), 0))
+        if fan.status == .lanchando || fan.status == .assistindo {
+            return Int(max(ceil(timeLeft), 0))
+        } else {
+            return Int(max(floor(timeLeft), 0))
+        }
     }
 }
 
