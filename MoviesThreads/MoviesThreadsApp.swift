@@ -11,7 +11,8 @@ import SwiftUI
 struct MoviesThreadsApp: App {
     var body: some Scene {
         WindowGroup {
-            GlobalWindowView()
+//            GlobalWindowView()
+            ShoppingView()
         }
     }
 }
