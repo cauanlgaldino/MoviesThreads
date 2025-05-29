@@ -7,12 +7,15 @@
 
 import Foundation
 
-class Fan: Thread, Identifiable {
+class Fan: Thread, Identifiable, ObservableObject {
     let id: String
     let moviesVM: MovieSessionViewModel
     let snackTime: TimeInterval
-    var status: FanStatus = .fila
+    @Published var status: FanStatus = .fila
     var alive = true
+    @Published var endSnackTime = Date()
+    @Published var endMovieTime = Date()
+    @Published var waitingTime = Date()
     
     init(id: String, snackTime: Int, moviesVM: MovieSessionViewModel) {
         self.id = id
@@ -41,13 +44,15 @@ class Fan: Thread, Identifiable {
     }
     
     func fanWantsToJoin() {
-        roomCapacitySemaphore.wait()
         
+        roomCapacitySemaphore.wait()
+        let newStartWaiting = Date()
         
         DispatchQueue.main.async { [unowned self] in
             mutex.wait()
             moviesVM.fansInSession += 1
             status = .esperando
+            waitingTime = newStartWaiting
             moviesVM.appendLog("🎟️ \(id) entrou na sala. Total: \(moviesVM.fansInSession)")
             mutex.signal()
         }
@@ -57,8 +62,10 @@ class Fan: Thread, Identifiable {
     func watchMovie() {
         sessionReady.wait()
         
+        let newEndMovieTime = Date().addingTimeInterval(moviesVM.exhibitionTime)
         DispatchQueue.main.async { [unowned self] in
             status = .assistindo
+            endMovieTime = newEndMovieTime
         }
         
         let endTime = Date().addingTimeInterval(moviesVM.exhibitionTime)
@@ -84,8 +91,10 @@ class Fan: Thread, Identifiable {
             mutex.signal()
         }
         
+        let newEndSnackTime = Date().addingTimeInterval(snackTime)
         
         DispatchQueue.main.async { [unowned self] in
+            endSnackTime = newEndSnackTime
             status = .lanchando
             moviesVM.appendLog("🍿 \(id) está lanchando.")
         }
@@ -96,8 +105,10 @@ class Fan: Thread, Identifiable {
             someValue = sin(someValue)
         }
         
+        let newStartWaiting = Date()
         DispatchQueue.main.async { [unowned self] in
             status = .fila
+            waitingTime = newStartWaiting
             moviesVM.appendLog("✅ \(id) terminou de lanchar e está aguardando para entrar novamente.")
         }
     }
