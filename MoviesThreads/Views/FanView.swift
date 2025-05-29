@@ -20,8 +20,14 @@ struct FanView: View {
                     VStack(alignment: .leading) {
                         Text(fan.id)
                             .font(.system(size: size.width/120))
-                        Text("Resta: \(getTimeLeft(fan: fan))")
-                            .font(.system(size: size.width/120))
+                        if fan.status == .lanchando || fan.status == .assistindo {
+                            Text("Resta: \(getTimeLeft(fan: fan))s")
+                                .font(.system(size: size.width/120))
+                        } else {
+                            Text("Passou: \(getTimeLeft(fan: fan))s")
+                                .font(.system(size: size.width/120))
+                        }
+                        
                     }
                     
                     .padding(8)
@@ -44,7 +50,7 @@ struct FanView: View {
             var timeLeft: TimeInterval = 0
         
         if fan.status == .lanchando {
-            timeLeft = fan.startEndTime.timeIntervalSince(now)
+            timeLeft = fan.endSnackTime.timeIntervalSince(now)
         } else if fan.status == .assistindo {
             // Exemplo de cálculo do tempo restante do filme (se ativar)
             // let elapsed = Date().timeIntervalSince(fan.startMovieTime)

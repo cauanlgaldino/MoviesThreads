@@ -73,7 +73,7 @@ struct CreateFanWindowView: View {
                 
                 .disabled(selectedFanName.isEmpty || Int(snackTimeString) == nil || Int(snackTimeString)! <= 0)
             }
-//        }
+        }
     }
 }
 
