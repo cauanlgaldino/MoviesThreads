@@ -9,8 +9,20 @@ import SwiftUI
 import Foundation
 
 struct ShoppingView: View {
-    @StateObject var session = MovieSessionViewModel(capacity: 3, exhibitionTime: 30)
-    @State private var fanIDGenerator = 0
+    let initialCapacity: Int
+    let initialExhibitionTime: Int
+    
+    @ObservedObject var moviesVM: MovieSessionViewModel
+    
+    @State private var showingCreateFanSheet = false
+    
+    
+    init(capacity: Int, exibitionTime: Int) {
+        self.initialCapacity = capacity
+        self.initialExhibitionTime = exibitionTime
+        self.moviesVM = MovieSessionViewModel(capacity: capacity, exhibitionTime: exibitionTime)
+    }
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -46,6 +58,10 @@ struct ShoppingView: View {
                     }
                 }
                 .padding().padding()
+                Button("➕ Adicionar Fã") {
+                    showingCreateFanSheet = true
+                }
+                .buttonStyle(.borderedProminent)
                 .background {
                     UnevenRoundedRectangle(topLeadingRadius: 0, bottomLeadingRadius: 16, bottomTrailingRadius: 16, topTrailingRadius: 0)
                         .foregroundStyle(.theater)
@@ -73,7 +89,18 @@ struct ShoppingView: View {
                 .frame(height: geometry.size.height * 0.2)
                 .frame(maxHeight: .infinity, alignment: .bottom)
             }
+            .sheet(isPresented: $showingCreateFanSheet) {
+                            CreateFanWindowView(
+                                moviesVM: moviesVM, onAddFan: { fanID, snackTimeInt in
+                                    let newFan = Fan(id: fanID, snackTime: snackTimeInt, moviesVM: moviesVM)
+                                    moviesVM.fans.append(newFan)
+                                    newFan.start()
+                                    moviesVM.markFanNameAsUsed(fanID)
+                                }
+                            )
+                        }
         }
+        .navigationBarBackButtonHidden(true)
     }
 }
 
@@ -93,8 +120,7 @@ struct LayoutConstants {
 }
 
 #Preview {
-    ShoppingView()
-        .frame(width: 1512, height: 982)
+    ShoppingView(capacity: 3, exibitionTime: 10)
 
 }
 

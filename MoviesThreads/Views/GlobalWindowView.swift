@@ -67,9 +67,9 @@ struct GlobalWindowView: View {
                     .disabled(Int(capacityString) == nil || Int(capacityString)! <= 0 || Int(durationString) == nil || Int(durationString)! <= 0)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                .padding() // Padding geral para o conteúdo da View
+                .padding()
                 .navigationDestination(for: SessionConfiguration.self) { config in
-                    MovieSessionView(capacity: config.capacity, exibitionTime: config.exhibitionTime)
+                    ShoppingView(capacity: config.capacity, exibitionTime: config.exhibitionTime)
                 }
                 .navigationBarBackButtonHidden(true)
             }
