@@ -11,9 +11,16 @@ import SwiftUI
 struct MoviesThreadsApp: App {
     var body: some Scene {
         WindowGroup {
-//            MovieSessionView()
-            ShoppingView()
-//            GlobalWindowView()
+            GlobalWindowView()
         }
+//        .windowStyle(.titleBar) // Estilo padrão com barra de título
+//        .defaultPosition(.center)
+//        .windowLevel(.floating)
+//        .windowResizability(.contentSize)
     }
+}
+
+
+#Preview {
+    GlobalWindowView()
 }

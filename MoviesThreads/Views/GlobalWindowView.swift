@@ -10,15 +10,19 @@ struct GlobalWindowView: View {
         NavigationStack(path: $path) {
             GeometryReader{ geo in
                 VStack(spacing: 20) {
-                    Text("🎬🎬🎬")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
                         
-                    Text("Exibição do Filme do Pelé")
+                    Text(
+                        """
+                        🎬🎬🎬
+                        Exibição do Filme do Pelé
+                        """)
+                    .multilineTextAlignment(.center)
+                    
+                    .lineSpacing(8)
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                    
-                    
+                        .padding(.bottom)
+                        
                     VStack(alignment: .leading) {
                         Text("Capacidade do Auditório")
                             .font(.headline)
@@ -28,12 +32,11 @@ struct GlobalWindowView: View {
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                         
                     }
-                    .padding()
+                    .padding(24)
                     .background(.ultraThinMaterial)
                     .cornerRadius(10)
-                    .shadow(radius: 5)
-                    .padding(.bottom, 10)
-                    .frame(width: geo.size.width * 0.6, alignment: .top)
+                    .shadow(radius: 5, x: 3, y: 3)
+                    .frame(width: geo.size.width * 0.25)
                     
                     
                     VStack(alignment: .leading) {
@@ -44,11 +47,13 @@ struct GlobalWindowView: View {
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                         
                     }
-                    .padding()
+                    .padding(24)
                     .background(.ultraThinMaterial)
                     .cornerRadius(10)
                     .shadow(radius: 5)
-                    .frame(width: geo.size.width * 0.6, alignment: .center)
+                    .frame(width: geo.size.width * 0.25)
+                    .padding(.bottom)
+                    
                     Button("Criar Sala") {
                         if let newCapacity = Int(capacityString), newCapacity > 0,
                            let newDuration = Int(durationString), newDuration > 0 {
@@ -57,11 +62,11 @@ struct GlobalWindowView: View {
                             print("Por favor, insira valores numéricos positivos válidos.")
                         }
                     }
-                    .buttonStyle(CustomRoundedButton())
+                    .buttonStyle(.borderedProminent)
                     .padding(.top)
                     .disabled(Int(capacityString) == nil || Int(capacityString)! <= 0 || Int(durationString) == nil || Int(durationString)! <= 0)
                 }
-                .frame(width: geo.size.width, height: geo.size.height, alignment: .center)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                 .padding() // Padding geral para o conteúdo da View
                 .navigationDestination(for: SessionConfiguration.self) { config in
                     MovieSessionView(capacity: config.capacity, exibitionTime: config.exhibitionTime)
@@ -69,20 +74,6 @@ struct GlobalWindowView: View {
                 .navigationBarBackButtonHidden(true)
             }
         }
-    }
-}
-
-struct CustomRoundedButton: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label.font(.title2)
-            .padding(.horizontal, 30) // Increased horizontal padding for width
-            .padding(.vertical, 15)   // Increased vertical padding for height
-            .background(Color.accentColor)  // Example background color
-            .cornerRadius(8)        // Rounded corners for a softer look
-            .foregroundColor(.white) // Example text color
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0) // Subtle press effect
-            .animation(.easeOut(duration: 0.2), value: configuration.isPressed) // Smooth animation
-//            .border(.bar, width: 2)
     }
 }
 

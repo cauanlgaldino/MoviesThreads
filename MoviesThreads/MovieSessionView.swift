@@ -11,18 +11,13 @@ struct MovieSessionView: View {
     let initialCapacity: Int
     let initialExhibitionTime: Int
 
-    // Correto: @ObservedObject para o ViewModel que é criado no init
     @ObservedObject private var moviesVM: MovieSessionViewModel
-
-    // Removido: @State private var fanIDGenerator = 0 (o ID será fornecido pelo usuário)
-
-    // 1. Novo estado para controlar a exibição da sheet
+    
     @State private var showingCreateFanSheet = false
 
     init(capacity: Int, exibitionTime: Int) {
         self.initialCapacity = capacity
         self.initialExhibitionTime = exibitionTime
-        // É importante que MovieSessionViewModel.exhibitionTime seja TimeInterval (Double)
         self.moviesVM = MovieSessionViewModel(capacity: capacity, exhibitionTime: exibitionTime)
     }
 
@@ -92,8 +87,7 @@ struct MovieSessionView: View {
                 .cornerRadius(12)
 
                 HStack {
-                    // 2. O botão agora apenas ativa a exibição da sheet
-                    Button("➕ Criar Fã") {
+                    Button("➕ Adicionar Fã") {
                         showingCreateFanSheet = true
                     }
                     .buttonStyle(.borderedProminent)
@@ -101,24 +95,13 @@ struct MovieSessionView: View {
             }
             .padding(20)
             .frame(width: geo.size.width, height: geo.size.height)
-            // 3. Modificador .sheet para apresentar a CreateFanWindowView
-//            .sheet(isPresented: $showingCreateFanSheet) {
-//                // 4. Passamos um closure para a CreateFanWindowView
-//                CreateFanWindowView(onAddFan: { fanID, snackTimeInt in
-//                    // A criação do fã é executada AQUI, na MovieSessionView
-//                    let newFan = Fan(id: fanID, snackTime: snackTimeInt, moviesVM: moviesVM)
-//                    moviesVM.fans.append(newFan)
-//                    newFan.start()
-//                })
-//            }
+
             .sheet(isPresented: $showingCreateFanSheet) {
                             CreateFanWindowView(
-                                // 4. Passamos o Binding para availableFanNames do moviesVM
                                 moviesVM: moviesVM, onAddFan: { fanID, snackTimeInt in
                                     let newFan = Fan(id: fanID, snackTime: snackTimeInt, moviesVM: moviesVM)
                                     moviesVM.fans.append(newFan)
                                     newFan.start()
-                                    // 5. Chamamos o método do ViewModel para marcar o nome como usado
                                     moviesVM.markFanNameAsUsed(fanID)
                                 }
                             )
