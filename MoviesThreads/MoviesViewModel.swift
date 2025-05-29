@@ -49,7 +49,12 @@ class MovieSessionViewModel: ObservableObject {
     }
     @Published var fans: [Fan] = []
     @Published var log: [LogEntry] = []
-    
+    @Published var availableNames: [String] = MovieSessionViewModel.allFanNames
+    static let allFanNames: [String] = [
+        "Garrincha", "Ronaldo", "Zico", "Rivelino", "Romário",
+        "Sócrates", "Ronaldinho", "Neymar Jr.", "Jairzinho", "Falcão"
+    ]
+
     init(capacity: Int, exhibitionTime: Int) {
         self.capacity = capacity
         self.exhibitionTime = TimeInterval(exhibitionTime)
@@ -59,6 +64,13 @@ class MovieSessionViewModel: ObservableObject {
         let demonstrator = Demonstrator(moviesVM: self)
         demonstrator.start()
     }
+    
+    func markFanNameAsUsed(_ name: String) {
+            if let index = availableNames.firstIndex(of: name) {
+                availableNames.remove(at: index)
+            }
+        }
+    
     
     func appendLog(_ message: String) {
         DispatchQueue.main.async { [unowned self] in
