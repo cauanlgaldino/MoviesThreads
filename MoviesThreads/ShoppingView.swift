@@ -9,9 +9,9 @@ import SwiftUI
 import Foundation
 
 struct ShoppingView: View {
-    @StateObject private var session = MovieSessionViewModel(capacity: 3, exhibitionTime: 30)
+    @StateObject var session = MovieSessionViewModel(capacity: 3, exhibitionTime: 30)
     @State private var fanIDGenerator = 0
-    @ObservedObject private var moviesVM: MovieSessionViewModel
+//    @ObservedObject var moviesVM: MovieSessionViewModel
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .topLeading) {
@@ -25,14 +25,14 @@ struct ShoppingView: View {
                 ProjectorView(size: geometry.size)
                 SeatsView(size: geometry.size)
                 HStack {
-                    Button("➕ Criar Fã") {
-                        fanIDGenerator += 1
-                        let newFan = Fan(id: moviesVM.fans[0].id, snackTime: Int(moviesVM.fans[0].snackTime), moviesVM: moviesVM)
-                        session.fans.append(newFan)
-                        newFan.start()
-                        
-                    }
-                    .buttonStyle(.borderedProminent)
+//                    Button("➕ Criar Fã") {
+//                        fanIDGenerator += 1
+//                        let newFan = Fan(id: moviesVM.fans[0].id, snackTime: Int(moviesVM.fans[0].snackTime), moviesVM: moviesVM)
+//                        session.fans.append(newFan)
+//                        newFan.start()
+//                        
+//                    }
+//                    .buttonStyle(.borderedProminent)
                 }
             }
         }
@@ -53,4 +53,6 @@ struct LayoutConstants {
     static let theaterHeightRatio: CGFloat = 0.8
     static let theaterWidthRatio: CGFloat = 0.55
 }
+
+
 
