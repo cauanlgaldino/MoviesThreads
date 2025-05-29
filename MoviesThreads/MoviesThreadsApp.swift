@@ -13,10 +13,6 @@ struct MoviesThreadsApp: App {
         WindowGroup {
             GlobalWindowView()
         }
-//        .windowStyle(.titleBar) // Estilo padrão com barra de título
-//        .defaultPosition(.center)
-//        .windowLevel(.floating)
-//        .windowResizability(.contentSize)
     }
 }
 
