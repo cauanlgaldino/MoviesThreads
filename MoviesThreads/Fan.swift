@@ -14,10 +14,10 @@ class Fan: Thread, Identifiable {
     var status: FanStatus = .fila
     var alive = true
     
-    init(id: String, session: MovieSessionViewModel, snackTime: TimeInterval) {
+    init(id: String, snackTime: Int, moviesVM: MovieSessionViewModel) {
         self.id = id
-        self.moviesVM = session
-        self.snackTime = snackTime
+        self.snackTime = TimeInterval(snackTime)
+        self.moviesVM = moviesVM
         super.init()
         self.name = "Fã \(id)"
     }
@@ -34,7 +34,7 @@ class Fan: Thread, Identifiable {
         
         DispatchQueue.main.async { [unowned self] in
             moviesVM.fans.remove(at: moviesVM.fans.firstIndex(where: { $0.id == self.id })!)
-            moviesVM.appendLog("🗑️ Fã \(self.id) foi removido da lista de simulação.")            
+            moviesVM.appendLog("🗑️ \(self.id) foi removido da lista de simulação.")
         }
         
     }
@@ -47,7 +47,7 @@ class Fan: Thread, Identifiable {
             mutex.wait()
             moviesVM.fansInSession += 1
             status = .esperando
-            moviesVM.appendLog("🎟️ Fã \(id) entrou na sala. Total: \(moviesVM.fansInSession)")
+            moviesVM.appendLog("🎟️ \(id) entrou na sala. Total: \(moviesVM.fansInSession)")
             mutex.signal()
         }
         
@@ -69,7 +69,7 @@ class Fan: Thread, Identifiable {
         movieOver.wait()
         
         DispatchQueue.main.async { [unowned self] in
-            moviesVM.appendLog("🍿 Fã \(id) terminou de assistir o filme.")
+            moviesVM.appendLog("🍿 \(id) terminou de assistir o filme.")
         }
     }
     
@@ -79,14 +79,14 @@ class Fan: Thread, Identifiable {
             mutex.wait()
             moviesVM.fansInSession -= 1
             roomCapacitySemaphore.signal()
-            moviesVM.appendLog("🚪 Fã \(id) saiu da sala.")
+            moviesVM.appendLog("🚪 \(id) saiu da sala.")
             mutex.signal()
         }
         
         
         DispatchQueue.main.async { [unowned self] in
             status = .lanchando
-            moviesVM.appendLog("🍿 Fã \(id) está lanchando.")
+            moviesVM.appendLog("🍿 \(id) está lanchando.")
         }
         
         let endTime = Date().addingTimeInterval(snackTime)
@@ -97,7 +97,7 @@ class Fan: Thread, Identifiable {
         
         DispatchQueue.main.async { [unowned self] in
             status = .fila
-            moviesVM.appendLog("✅ Fã \(id) terminou de lanchar e está aguardando para entrar novamente.")
+            moviesVM.appendLog("✅ \(id) terminou de lanchar e está aguardando para entrar novamente.")
         }
     }
 }

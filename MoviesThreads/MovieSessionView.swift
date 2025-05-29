@@ -6,56 +6,57 @@
 //
 
 import SwiftUI
-import Combine
-
-import SwiftUI
 
 struct MovieSessionView: View {
     let initialCapacity: Int
     let initialExhibitionTime: Int
 
-    @ObservedObject private var session: MovieSessionViewModel
+    // Correto: @ObservedObject para o ViewModel que é criado no init
+    @ObservedObject private var moviesVM: MovieSessionViewModel
 
-    @State private var fanIDGenerator = 0
+    // Removido: @State private var fanIDGenerator = 0 (o ID será fornecido pelo usuário)
+
+    // 1. Novo estado para controlar a exibição da sheet
+    @State private var showingCreateFanSheet = false
 
     init(capacity: Int, exibitionTime: Int) {
         self.initialCapacity = capacity
         self.initialExhibitionTime = exibitionTime
-        session = MovieSessionViewModel(capacity: capacity, exhibitionTime: exibitionTime)
+        // É importante que MovieSessionViewModel.exhibitionTime seja TimeInterval (Double)
+        self.moviesVM = MovieSessionViewModel(capacity: capacity, exhibitionTime: exibitionTime)
     }
 
-    
     var body: some View {
         GeometryReader { geo in
             VStack(spacing: 20) {
                 Text("🎥 Sessão de Filme")
                     .font(.largeTitle.bold())
-                
+
                 HStack {
                     Text("Demonstrador:")
-                    Text(session.demonstratorStatus.rawValue)
+                    Text(moviesVM.demonstratorStatus.rawValue)
                         .fontWeight(.bold)
-                        .foregroundColor(session.demonstratorStatus == .exibindo ? .green : .gray)
+                        .foregroundColor(moviesVM.demonstratorStatus == .exibindo ? .green : .gray)
                 }
-                
+
                 VStack {
                     Text("Fãs na Simulação:")
                         .font(.headline)
-                    
-                    ForEach(session.fans) { fan in
+
+                    ForEach(moviesVM.fans) { fan in
                         HStack {
                             Text("👤 \(fan.id)")
-                            
+
                             Spacer()
-                            
+
                             Text(fan.status.rawValue)
                                 .foregroundColor(color(for: fan.status))
                             Image(systemName: icon(for: fan.status))
-                            
+
                             Spacer()
-                            
+
                             Button {
-                                session.removeFan(fan)
+                                moviesVM.removeFan(fan)
                             } label: {
                                 Image(systemName: "minus.circle.fill")
                                     .foregroundColor(.red)
@@ -65,18 +66,17 @@ struct MovieSessionView: View {
                             .disabled(!fan.alive)
                         }
                         .frame(width: geo.size.width * 0.4)
-                        
                     }
                 }
                 .padding()
                 .background(.ultraThinMaterial)
                 .cornerRadius(12)
-                
+
                 VStack(alignment: .leading) {
                     Text("📋 Log de Eventos:")
                         .font(.headline)
                     ScrollView {
-                        ForEach(session.log.reversed()) { entry in
+                        ForEach(moviesVM.log.reversed()) { entry in
                             Text(
                                 """
                                 \(entry.message)
@@ -86,30 +86,47 @@ struct MovieSessionView: View {
                                 .multilineTextAlignment(.leading)
                         }
                     }
-                    
-                    
                 }
                 .padding()
                 .background(.thinMaterial)
                 .cornerRadius(12)
-                
+
                 HStack {
+                    // 2. O botão agora apenas ativa a exibição da sheet
                     Button("➕ Criar Fã") {
-                        fanIDGenerator += 1
-                        let fan = Fan(id: "F\(fanIDGenerator)", session: session, snackTime: TimeInterval(Int.random(in: 1...5)))
-                        session.fans.append(fan)
-                        fan.start()
-                        
+                        showingCreateFanSheet = true
                     }
                     .buttonStyle(.borderedProminent)
                 }
             }
             .padding(20)
             .frame(width: geo.size.width, height: geo.size.height)
+            // 3. Modificador .sheet para apresentar a CreateFanWindowView
+//            .sheet(isPresented: $showingCreateFanSheet) {
+//                // 4. Passamos um closure para a CreateFanWindowView
+//                CreateFanWindowView(onAddFan: { fanID, snackTimeInt in
+//                    // A criação do fã é executada AQUI, na MovieSessionView
+//                    let newFan = Fan(id: fanID, snackTime: snackTimeInt, moviesVM: moviesVM)
+//                    moviesVM.fans.append(newFan)
+//                    newFan.start()
+//                })
+//            }
+            .sheet(isPresented: $showingCreateFanSheet) {
+                            CreateFanWindowView(
+                                // 4. Passamos o Binding para availableFanNames do moviesVM
+                                moviesVM: moviesVM, onAddFan: { fanID, snackTimeInt in
+                                    let newFan = Fan(id: fanID, snackTime: snackTimeInt, moviesVM: moviesVM)
+                                    moviesVM.fans.append(newFan)
+                                    newFan.start()
+                                    // 5. Chamamos o método do ViewModel para marcar o nome como usado
+                                    moviesVM.markFanNameAsUsed(fanID)
+                                }
+                            )
+                        }
         }
         .navigationBarBackButtonHidden(true)
     }
-    
+
     func color(for status: FanStatus) -> Color {
         switch status {
         case .fila: return .gray
@@ -118,7 +135,7 @@ struct MovieSessionView: View {
         case .lanchando: return .orange
         }
     }
-    
+
     func icon(for status: FanStatus) -> String {
         switch status {
         case .fila: return "hourglass"
@@ -130,6 +147,5 @@ struct MovieSessionView: View {
 }
 
 #Preview {
-    MovieSessionView(capacity: 3, exibitionTime: 6)
+    MovieSessionView(capacity: 3, exibitionTime: 10)
 }
-
