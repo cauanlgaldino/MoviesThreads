@@ -9,8 +9,8 @@ import Foundation
 import Combine
 
 enum FanStatus: String {
-    case fila = "Na Fila" // Fora da sala, esperando para tentar entrar
-    case esperando = "Esperando Filme" // Entrou na sala, mas o filme não começou
+    case fila = "Na Fila"
+    case esperando = "Esperando Filme"
     case assistindo = "Assistindo"
     case lanchando = "Lanchando"
 }
@@ -84,11 +84,5 @@ class MovieSessionViewModel: ObservableObject {
             fanToRemove.alive = false
             appendLog("❌ Fã \(fanToRemove.id) vai ser removido da simulação.")
         }
-        
-        
-//        if let index = self.fans.firstIndex(where: { $0.id == fanToRemove.id }) {
-//            self.fans.remove(at: index)
-//            self.appendLog("🗑️ Fã \(fanToRemove.id) foi removido da lista de simulação.")
-//        }
     }
 }
