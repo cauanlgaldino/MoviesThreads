@@ -12,8 +12,8 @@ struct MoviesThreadsApp: App {
     var body: some Scene {
         WindowGroup {
             GlobalWindowView()
-//            ShoppingView()
         }
+        .defaultLaunchBehavior(.presented)
     }
 }
 

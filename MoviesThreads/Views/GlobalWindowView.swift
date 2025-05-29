@@ -66,8 +66,8 @@ struct GlobalWindowView: View {
                     .padding(.top)
                     .disabled(Int(capacityString) == nil || Int(capacityString)! <= 0 || Int(durationString) == nil || Int(durationString)! <= 0)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                 .padding()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                 .navigationDestination(for: SessionConfiguration.self) { config in
                     ShoppingView(capacity: config.capacity, exibitionTime: config.exhibitionTime)
                 }

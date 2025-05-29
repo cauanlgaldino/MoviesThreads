@@ -8,8 +8,6 @@
 import SwiftUI
 import Foundation
 
-
-
 struct ShoppingView: View {
     let initialCapacity: Int
     let initialExhibitionTime: Int
@@ -28,7 +26,7 @@ struct ShoppingView: View {
         self.moviesVM = MovieSessionViewModel(capacity: capacity, exhibitionTime: exibitionTime)
     }
     
-
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -36,14 +34,16 @@ struct ShoppingView: View {
                     .resizable()
                     .scaledToFill()
                     .frame(width: geometry.size.width)
-
+                
                 VStack(spacing: 0) {
                     Image(.pele)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: geometry.size.width/3)
                         .padding()
-
+                    
+                    
+                    
                     HStack {
                         ForEach(0..<5, id: \.self) { index in
                             Image(.chairBrown)
@@ -63,7 +63,7 @@ struct ShoppingView: View {
                                 )
                         }
                     }
-
+                    
                     HStack {
                         ForEach(5..<11, id: \.self) { index in
                             Image(.chairBrown)
@@ -85,10 +85,6 @@ struct ShoppingView: View {
                     }
                 }
                 .padding().padding()
-                Button("➕ Adicionar Fã") {
-                    showingCreateFanSheet = true
-                }
-                .buttonStyle(.borderedProminent)
                 .background {
                     UnevenRoundedRectangle(topLeadingRadius: 0, bottomLeadingRadius: 16, bottomTrailingRadius: 16, topTrailingRadius: 0)
                         .foregroundStyle(.theater)
@@ -104,7 +100,7 @@ struct ShoppingView: View {
                         .opacity(0.8)
                 }
                 .frame(maxHeight: .infinity, alignment: .top)
-
+                
                 // barracas
                 HStack {
                     // area disponivel pra os fas
@@ -117,7 +113,7 @@ struct ShoppingView: View {
                     .overlay {
                         Image(.provisorio)
                     }
-
+                    
                     VStack(spacing: -geometry.size.height/10) {
                         Image(.barracaNova)
                             .resizable()
@@ -150,72 +146,101 @@ struct ShoppingView: View {
                                     }
                                 }
                                 .frame(maxWidth: .infinity, alignment: .leading)
-
+                                
                             }
                             .padding(.top, -geometry.size.height/20)
-
-
+                        
+                        
                         Image(.barracaNova)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: geometry.size.width/6, height: geometry.size.height/2)
                         
                     }
-
+                    
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-
+                
                 // so pra saber onde fica os logs
                 HStack {
                     Rectangle()
                     Rectangle()
                     Rectangle()
-
+                    
                 }
                 .frame(height: geometry.size.height * 0.2)
                 .frame(maxHeight: .infinity, alignment: .bottom)
+                
+                
+                Button {
+                    showingCreateFanSheet = true
+                } label: {
+                    VStack(spacing: -4) {
+                        Text("Adicionar Fã")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .fontWeight(.medium)
+                        Text("＋")
+                            .font(.title)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                    }
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 24)
+                    .background(Color.red)
+                    .cornerRadius(10)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.black, lineWidth: 3)
+                    )
+                    .shadow(radius: 10)
+                }
+                .buttonStyle(.plain)
+                .frame(height: geometry.size.height * 0.5)
+                .frame(maxHeight: .infinity, alignment: .bottom)
+                .offset(x: -10)
             }
             .sheet(isPresented: $showingCreateFanSheet) {
-                            CreateFanWindowView(
-                                moviesVM: moviesVM, onAddFan: { fanID, snackTimeInt in
-                                    let newFan = Fan(id: fanID, snackTime: snackTimeInt, moviesVM: moviesVM)
-                                    moviesVM.fans.append(newFan)
-                                    newFan.start()
-                                    moviesVM.markFanNameAsUsed(fanID)
-                                }
-                            )
-                        }
+                CreateFanWindowView(
+                    moviesVM: moviesVM, onAddFan: { fanID, snackTimeInt in
+                        let newFan = Fan(id: fanID, snackTime: snackTimeInt, moviesVM: moviesVM)
+                        moviesVM.fans.append(newFan)
+                        newFan.start()
+                        moviesVM.markFanNameAsUsed(fanID)
+                    }
+                )
+            }
         }
         .navigationBarBackButtonHidden(true)
-        
-        func printChairsPosition() {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    let sortedKeys = chairPositions.keys.sorted()
-                    for key in sortedKeys {
-                        if let position = chairPositions[key] {
-                            print("Chair \(key): \(position)")
-                        }
-                    }
+    }
+    func printChairsPosition() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            let sortedKeys = chairPositions.keys.sorted()
+            for key in sortedKeys {
+                if let position = chairPositions[key] {
+                    print("Chair \(key): \(position)")
                 }
             }
-
-        func printBurguerPosition() {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                let sortedKeys = burguerPositions.keys.sorted()
-                for key in sortedKeys {
-                    if let position = burguerPositions[key] {
-                        print("Chair \(key): \(position)")
-                    }
-                }
-            }
-
         }
-
-        func getChairPosition(of chairCount: Int) -> CGPoint? {
-                return chairPositions[chairCount]
-            }
     }
     
+    func printBurguerPosition() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            let sortedKeys = burguerPositions.keys.sorted()
+            for key in sortedKeys {
+                if let position = burguerPositions[key] {
+                    print("Chair \(key): \(position)")
+                }
+            }
+        }
+        
+    }
+    
+    func getChairPosition(of chairCount: Int) -> CGPoint? {
+        return chairPositions[chairCount]
+    }
+}
+
 struct LayoutConstants {
     static let screenWidthRatio: CGFloat = 0.55
     static let screenHeightRatio: CGFloat = 0.64
@@ -233,7 +258,7 @@ struct LayoutConstants {
 
 #Preview {
     ShoppingView(capacity: 3, exibitionTime: 10)
-
+    
 }
 
 
