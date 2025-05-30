@@ -11,23 +11,22 @@ import Foundation
 struct ShoppingView: View {
     let initialCapacity: Int
     let initialExhibitionTime: Int
-    
+
     @ObservedObject var moviesVM: MovieSessionViewModel
-    
     @State private var showingCreateFanSheet = false
-    
+
     @State private var chairPositions: [Int : CGPoint] = [:]
     @State private var burguerPositions: [Int : CGPoint] = [:]
     @State var beingEated: [Bool] = Array(repeating: false, count: 10)
     @State private var queuePositions: [Int : CGPoint] = [:]
-    
+
     init(capacity: Int, exibitionTime: Int) {
         self.initialCapacity = capacity
         self.initialExhibitionTime = exibitionTime
         self.moviesVM = MovieSessionViewModel(capacity: capacity, exhibitionTime: exibitionTime)
     }
-    
-    
+
+
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -35,16 +34,15 @@ struct ShoppingView: View {
                     .resizable()
                     .scaledToFill()
                     .frame(width: geometry.size.width)
-                
+
                 VStack(spacing: 0) {
                     Image(.pele)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: geometry.size.width/3)
                         .padding()
-                    
-                    
-                    
+
+
                     HStack {
                         ForEach(0..<5, id: \.self) { index in
                             Image(.chairBrown)
@@ -55,16 +53,18 @@ struct ShoppingView: View {
                                     GeometryReader { geo in
                                         Color.clear
                                             .onAppear {
-                                                let origin = geo.frame(in: .global).origin
+                                                let midX = geo.frame(in: .global).midX
+                                                let midY = geo.frame(in: .global).midY
+
                                                 DispatchQueue.main.async {
-                                                    chairPositions[index + 1] = origin
+                                                    chairPositions[index + 1] = CGPoint(x: midX, y: midY)
                                                 }
                                             }
                                     }
                                 )
                         }
                     }
-                    
+
                     HStack {
                         ForEach(5..<11, id: \.self) { index in
                             Image(.chairBrown)
@@ -75,9 +75,11 @@ struct ShoppingView: View {
                                     GeometryReader { geo in
                                         Color.clear
                                             .onAppear {
-                                                let origin = geo.frame(in: .global).origin
+                                                let midX = geo.frame(in: .global).midX
+                                                let midY = geo.frame(in: .global).midY
+
                                                 DispatchQueue.main.async {
-                                                    chairPositions[index + 1] = origin
+                                                    chairPositions[index + 1] = CGPoint(x: midX, y: midY)
                                                 }
                                             }
                                     }
@@ -101,20 +103,21 @@ struct ShoppingView: View {
                         .opacity(0.8)
                 }
                 .frame(maxHeight: .infinity, alignment: .top)
-                
+
                 // barracas
                 HStack {
                     // area disponivel pra os fas
                     VStack {
                         Rectangle()
                             .frame(width: geometry.size.height * 0.1, height: geometry.size.height * 0.77)
+                            .foregroundStyle(.clear)
                     }
                     .padding(.trailing, -32)
                     .padding(.top, -48)
                     .overlay {
-                        Image(.provisorio)
+                        //                        Image(.provisorio)
                     }
-                    
+
                     VStack(spacing: -geometry.size.height/10) {
                         Image(.barracaNova)
                             .resizable()
@@ -131,7 +134,7 @@ struct ShoppingView: View {
                                                 Image(.batataFrita)
                                                     .resizable()
                                                     .aspectRatio(contentMode: .fit)
-                                                    .offset(x: 30, y: -15)
+                                                    .offset(x: geometry.size.width/40, y: -geometry.size.height/80)
                                             }
                                             .background(
                                                 GeometryReader { geo in
@@ -139,7 +142,7 @@ struct ShoppingView: View {
                                                         .onAppear {
                                                             let origin = geo.frame(in: .global).origin
                                                             DispatchQueue.main.async {
-                                                                chairPositions[index + 1] = origin
+                                                                burguerPositions[index + 1] = origin
                                                             }
                                                         }
                                                 }
@@ -147,27 +150,28 @@ struct ShoppingView: View {
                                     }
                                 }
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                
+
                             }
                             .padding(.top, -geometry.size.height/20)
-                        
-                        
+
+
                         Image(.barracaNova)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: geometry.size.width/6, height: geometry.size.height/2)
-                        
+
                     }
-                    
+
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                
-                VStack {
-                    if !moviesVM.fans.isEmpty {
-                        ForEach(moviesVM.fans) { fan in
-                            FanView(fan: fan, size: geometry.size)
-                        }
-                    }
+
+                ForEach(Array(moviesVM.fans.enumerated()), id: \.element.id) { index, fan in
+                    let chair = chairId(for: index)
+                    FanView(fan: fan, size: geometry.size)
+                        .position(
+                            x: getChairPosition(of: chair).x - 45,
+                            y: getChairPosition(of: chair).y - 52
+                        )
                 }
                 // fila para o cinema
                 HStack {
@@ -190,7 +194,7 @@ struct ShoppingView: View {
                                 )
                         }
                     }
-                    
+
                     VStack(alignment: .leading) {
                         ForEach(0..<5, id: \.self) { index in
                             Rectangle()
@@ -213,18 +217,18 @@ struct ShoppingView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                 .padding(.leading, +geometry.size.width/20)
-                
+
                 // so pra saber onde fica os logs
                 HStack {
                     Rectangle()
                     Rectangle()
                     Rectangle()
-                    
+
                 }
                 .frame(height: geometry.size.height * 0.2)
                 .frame(maxHeight: .infinity, alignment: .bottom)
-                
-                
+
+
                 Button {
                     showingCreateFanSheet = true
                 } label: {
@@ -265,6 +269,9 @@ struct ShoppingView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
+        .onAppear {
+            printChairsPosition()
+        }
     }
     func printChairsPosition() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
@@ -276,7 +283,7 @@ struct ShoppingView: View {
             }
         }
     }
-    
+
     func printBurguerPosition() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             let sortedKeys = burguerPositions.keys.sorted()
@@ -286,9 +293,9 @@ struct ShoppingView: View {
                 }
             }
         }
-        
+
     }
-    
+
     func printQueuePosition() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             let sortedKeys = queuePositions.keys.sorted()
@@ -298,15 +305,19 @@ struct ShoppingView: View {
                 }
             }
         }
-        
+
     }
-    
+
     func getQueuePosition(of queueCount: Int) -> CGPoint? {
         return queuePositions[queueCount]
     }
-    
-    func getChairPosition(of chairCount: Int) -> CGPoint? {
-        return chairPositions[chairCount]
+
+    func getChairPosition(of chairCount: Int) -> CGPoint {
+        return chairPositions[chairCount] ?? CGPoint.zero
+    }
+
+    func chairId(for index: Int) -> Int {
+        return index + 1 // Ou alguma lógica mais complexa
     }
 }
 
@@ -327,7 +338,8 @@ struct LayoutConstants {
 
 #Preview {
     ShoppingView(capacity: 3, exibitionTime: 10)
-    
+        .frame(width: 1512/1.25, height: 982/1.25)
+
 }
 
 
