@@ -29,7 +29,7 @@ struct FanView: View {
                         }
                         
                     }
-                    
+                    .minimumScaleFactor(0.5)
                     .padding(8)
                 }
                 .frame(width: size.width/18, height: size.height/15)
