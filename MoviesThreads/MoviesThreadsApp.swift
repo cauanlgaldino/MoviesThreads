@@ -12,11 +12,11 @@ struct MoviesThreadsApp: App {
     var body: some Scene {
         WindowGroup {
             GlobalWindowView()
+                .frame(minWidth: 1209.6, minHeight: 785.6)
                 .windowResizeBehavior(.disabled)
-                .frame(width: 1209.6, height: 785.6)
         }
         .defaultLaunchBehavior(.presented)
-
+        
     }
 }
 

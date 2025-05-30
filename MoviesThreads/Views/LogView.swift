@@ -10,25 +10,38 @@ import SwiftUI
 struct Log: View {
     let title: String
     let color: Color
-    let logs: [LogEntry]
+    let logs: [LogEntry] 
+
     var body: some View {
         ZStack(alignment: .topLeading) {
             Image("DisplayLog")
                 .resizable()
-            VStack(alignment: .leading, spacing: 10) {
+                .scaledToFill()
+                .clipped()
+
+            VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(.custom("PixelifySans-Semibold", size: 32))
+                    .font(.custom("PixelifySans-Semibold", size: 28))
                     .foregroundStyle(color)
-                VStack(spacing: 6) {
-                    ForEach(logs.suffix(4).reversed(), id: \.self) { log in
-                        Text(log.message)
-                            .font(.custom("PixelifySans-Semibold", size: 24))
-                            .foregroundStyle(.whiteLog)
+                    .padding(.leading, 32)
+
+                ScrollView(.vertical) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        ForEach(logs, id: \.self) { log in
+                            Text(log.message)
+                                .font(.custom("PixelifySans-Semibold", size: 20))
+                                .foregroundStyle(.whiteLog)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .multilineTextAlignment(.leading)
+                        }
                     }
+                    .padding(.horizontal, 32)
+                    .padding(.bottom, 8)
                 }
+                .frame(maxHeight: .infinity)
                 .clipped()
             }
-            .padding(.leading, 50)
+            .padding(.top, 4)
         }
     }
 }
