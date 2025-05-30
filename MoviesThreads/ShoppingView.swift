@@ -140,7 +140,7 @@ struct ShoppingView: View {
 
                 ForEach(Array(moviesVM.fans.enumerated()), id: \.element.id) { index, fan in
                     let chair = chairId(for: index)
-                    FanView(fan: fan, size: geometry.size)
+                    FanView(fan: fan, now: moviesVM.now, size: geometry.size)
                         .position(
                             x: getChairPosition(of: chair).x - 45,
                             y: getChairPosition(of: chair).y - 52
@@ -192,14 +192,15 @@ struct ShoppingView: View {
                 .padding(.leading, +geometry.size.width/20)
 
                 // so pra saber onde fica os logs
-                HStack {
-                    Rectangle()
-                    Rectangle()
-                    Rectangle()
-
-                }
-                .frame(height: geometry.size.height * 0.2)
-                .frame(maxHeight: .infinity, alignment: .bottom)
+//                HStack {
+//                    Rectangle()
+//                    Rectangle()
+//                    Rectangle()
+//
+//                }
+                LogsView(size: geometry.size, moviesVM: moviesVM)
+//                .frame(height: geometry.size.height * 0.2)
+//                .frame(maxHeight: .infinity, alignment: .bottom)
 
 
                 Button {

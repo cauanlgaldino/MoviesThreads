@@ -35,12 +35,10 @@ class MovieSessionViewModel: ObservableObject {
     @Published var exhibitionTime: TimeInterval = 0
     
     @Published var demonstratorStatus: DemonstratorStatus = .aguardandoFas
+    @Published var now = Date()
     @Published var fansInSession: Int = 0 {
         didSet {
             if fansInSession == capacity {
-                DispatchQueue.main.async { [unowned self] in
-                    appendLog("✅ Sala cheia! Sinalizando o demonstrador para iniciar o filme.")
-                }
                 for _ in 0 ..< capacity+1 {
                     sessionReady.signal()
                 }
@@ -48,13 +46,15 @@ class MovieSessionViewModel: ObservableObject {
         }
     }
     @Published var fans: [Fan] = []
-    @Published var log: [LogEntry] = []
+    @Published var queueLog: [LogEntry] = []
+    @Published var roomLog: [LogEntry] = []
+    @Published var snackLog: [LogEntry] = []
     @Published var availableNames: [String] = MovieSessionViewModel.allFanNames
     static let allFanNames: [String] = [
         "Garrincha", "Ronaldo", "Zico", "Rivelino", "Romário",
         "Sócrates", "Ronaldinho", "Neymar Jr.", "Jairzinho", "Falcão"
     ]
-
+    
     init(capacity: Int, exhibitionTime: Int) {
         self.capacity = capacity
         self.exhibitionTime = TimeInterval(exhibitionTime)
@@ -63,18 +63,33 @@ class MovieSessionViewModel: ObservableObject {
         
         let demonstrator = Demonstrator(moviesVM: self)
         demonstrator.start()
+        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            self.now = Date()
+        }
     }
     
     func markFanNameAsUsed(_ name: String) {
-            if let index = availableNames.firstIndex(of: name) {
-                availableNames.remove(at: index)
-            }
+        if let index = availableNames.firstIndex(of: name) {
+            availableNames.remove(at: index)
         }
+    }
     
     
-    func appendLog(_ message: String) {
+    func appendQueueLog(_ message: String) {
         DispatchQueue.main.async { [unowned self] in
-            log.append(LogEntry(message: message))
+            queueLog.append(LogEntry(message: message))
+        }
+    }
+    
+    func appendRoomLog(_ message: String) {
+        DispatchQueue.main.async { [unowned self] in
+            roomLog.append(LogEntry(message: message))
+        }
+    }
+    
+    func appendSnackLog(_ message: String) {
+        DispatchQueue.main.async { [unowned self] in
+            snackLog.append(LogEntry(message: message))
         }
     }
     
@@ -82,7 +97,7 @@ class MovieSessionViewModel: ObservableObject {
     func removeFan(_ fanToRemove: Fan) {
         DispatchQueue.main.async { [unowned self] in
             fanToRemove.alive = false
-            appendLog("❌ Fã \(fanToRemove.id) vai ser removido da simulação.")
+            appendQueueLog("❌ Fã \(fanToRemove.id) vai ser removido da simulação.")
         }
     }
 }
