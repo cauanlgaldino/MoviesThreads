@@ -27,7 +27,7 @@ class Demonstrator: Thread {
         
         DispatchQueue.main.async { [unowned self] in
             moviesVM.demonstratorStatus = .exibindo
-            moviesVM.appendLog("🎬 Demonstrador: Iniciando exibição do filme.")
+            moviesVM.appendRoomLog("🎬 Demonstrador: Sala cheia! Iniciando exibição do filme.")
         }
         
         let endTime = Date().addingTimeInterval(moviesVM.exhibitionTime)
@@ -39,7 +39,7 @@ class Demonstrator: Thread {
         
         DispatchQueue.main.async { [unowned self] in
             moviesVM.demonstratorStatus = .aguardandoFas
-            moviesVM.appendLog("✅ Demonstrador: Filme terminou.")
+            moviesVM.appendRoomLog("✅ Demonstrador: Filme terminou.")
         }
         
         for _ in 0..<moviesVM.capacity {

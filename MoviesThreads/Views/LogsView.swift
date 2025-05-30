@@ -9,13 +9,13 @@ import SwiftUI
 
 struct LogsView: View {
     let size: CGSize
-    @Binding var logs: [LogEntry]
-    
+    @ObservedObject var moviesVM: MovieSessionViewModel
+
     var body: some View {
         HStack(spacing: 6) {
-            Log(title: "Demonstrador", color: .greenDemonstrator, logs: logs)
-            Log(title: "Sala", color: .redTheater, logs: logs)
-            Log(title: "Fãs", color: .purpleFan, logs: logs)
+            Log(title: "Fila", color: .greenDemonstrator, logs: moviesVM.queueLog.reversed())
+            Log(title: "Sala", color: .redTheater, logs: moviesVM.roomLog.reversed())
+            Log(title: "Lanche", color: .purpleFan, logs: moviesVM.snackLog.reversed())
         }
         .frame(width: size.width,
                height: size.height * LayoutConstants.logHeightRatio,

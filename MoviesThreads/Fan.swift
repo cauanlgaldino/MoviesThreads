@@ -38,12 +38,16 @@ class Fan: Thread, Identifiable, ObservableObject {
         DispatchQueue.main.async { [unowned self] in
             moviesVM.fans.remove(at: moviesVM.fans.firstIndex(where: { $0.id == self.id })!)
             moviesVM.availableNames.append(id)
-            moviesVM.appendLog("🗑️ \(self.id) foi removido da lista de simulação.")
+            moviesVM.appendSnackLog("🗑️ \(self.id) foi removido da lista de simulação.")
         }
         
     }
     
     func fanWantsToJoin() {
+        
+        DispatchQueue.main.async { [unowned self] in
+            moviesVM.appendQueueLog("🎟️ \(id) entrou na Fila.")
+        }
         
         roomCapacitySemaphore.wait()
         let newStartWaiting = Date()
@@ -53,7 +57,7 @@ class Fan: Thread, Identifiable, ObservableObject {
             moviesVM.fansInSession += 1
             status = .esperando
             waitingTime = newStartWaiting
-            moviesVM.appendLog("🎟️ \(id) entrou na sala. Total: \(moviesVM.fansInSession)")
+            moviesVM.appendRoomLog("🎟️ \(id) entrou na sala. Total: \(moviesVM.fansInSession)")
             mutex.signal()
         }
         
@@ -77,26 +81,24 @@ class Fan: Thread, Identifiable, ObservableObject {
         movieOver.wait()
         
         DispatchQueue.main.async { [unowned self] in
-            moviesVM.appendLog("🍿 \(id) terminou de assistir o filme.")
+            mutex.wait()
+            moviesVM.fansInSession -= 1
+            roomCapacitySemaphore.signal()
+            moviesVM.appendRoomLog("🚪 \(id) saiu da sala.")
+            mutex.signal()
         }
     }
     
     func fanGoesToSnack() {
         
-        DispatchQueue.main.async { [unowned self] in
-            mutex.wait()
-            moviesVM.fansInSession -= 1
-            roomCapacitySemaphore.signal()
-            moviesVM.appendLog("🚪 \(id) saiu da sala.")
-            mutex.signal()
-        }
+
         
         let newEndSnackTime = Date().addingTimeInterval(snackTime)
         
         DispatchQueue.main.async { [unowned self] in
             endSnackTime = newEndSnackTime
             status = .lanchando
-            moviesVM.appendLog("🍿 \(id) está lanchando.")
+            moviesVM.appendSnackLog("🍿 \(id) está lanchando.")
         }
         
         let endTime = Date().addingTimeInterval(snackTime)
@@ -109,7 +111,7 @@ class Fan: Thread, Identifiable, ObservableObject {
         DispatchQueue.main.async { [unowned self] in
             status = .fila
             waitingTime = newStartWaiting
-            moviesVM.appendLog("✅ \(id) terminou de lanchar e está aguardando para entrar novamente.")
+            moviesVM.appendSnackLog("✅ \(id) terminou de lanchar e está aguardando para entrar novamente.")
         }
     }
 }

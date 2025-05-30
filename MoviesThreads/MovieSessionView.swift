@@ -67,24 +67,24 @@ struct MovieSessionView: View {
                 .background(.ultraThinMaterial)
                 .cornerRadius(12)
 
-                VStack(alignment: .leading) {
-                    Text("📋 Log de Eventos:")
-                        .font(.headline)
-                    ScrollView {
-                        ForEach(moviesVM.log.reversed()) { entry in
-                            Text(
-                                """
-                                \(entry.message)
-                                """)
-                                .font(.title3)
-                                .padding(.vertical, 4)
-                                .multilineTextAlignment(.leading)
-                        }
-                    }
-                }
-                .padding()
-                .background(.thinMaterial)
-                .cornerRadius(12)
+//                VStack(alignment: .leading) {
+//                    Text("📋 Log de Eventos:")
+//                        .font(.headline)
+//                    ScrollView {
+//                        ForEach(moviesVM.log.reversed()) { entry in
+//                            Text(
+//                                """
+//                                \(entry.message)
+//                                """)
+//                                .font(.title3)
+//                                .padding(.vertical, 4)
+//                                .multilineTextAlignment(.leading)
+//                        }
+//                    }
+//                }
+//                .padding()
+//                .background(.thinMaterial)
+//                .cornerRadius(12)
 
                 HStack {
                     Button("➕ Adicionar Fã") {

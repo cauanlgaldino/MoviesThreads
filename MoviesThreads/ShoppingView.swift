@@ -219,14 +219,15 @@ struct ShoppingView: View {
                 .padding(.leading, +geometry.size.width/20)
 
                 // so pra saber onde fica os logs
-                HStack {
-                    Rectangle()
-                    Rectangle()
-                    Rectangle()
-
-                }
-                .frame(height: geometry.size.height * 0.2)
-                .frame(maxHeight: .infinity, alignment: .bottom)
+//                HStack {
+//                    Rectangle()
+//                    Rectangle()
+//                    Rectangle()
+//
+//                }
+                LogsView(size: geometry.size, moviesVM: moviesVM)
+//                .frame(height: geometry.size.height * 0.2)
+//                .frame(maxHeight: .infinity, alignment: .bottom)
 
 
                 Button {
