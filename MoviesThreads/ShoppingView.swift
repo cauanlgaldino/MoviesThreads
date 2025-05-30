@@ -106,14 +106,6 @@ struct ShoppingView: View {
 
                 // barracas
                 HStack {
-                    // area disponivel pra os fas
-                    VStack {
-                        Rectangle()
-                            .frame(width: geometry.size.height * 0.1, height: geometry.size.height * 0.77)
-                            .foregroundStyle(.clear)
-                    }
-                    .padding(.trailing, -32)
-                    .padding(.top, -48)
 
                     VStack(spacing: -geometry.size.height/10) {
                         Image(.barracaNova)
@@ -121,31 +113,14 @@ struct ShoppingView: View {
                             .aspectRatio(contentMode: .fit)
                             .frame(width: geometry.size.width/6, height: geometry.size.height/2)
                             .overlay {
-                                VStack(spacing: geometry.size.height/30) {
-                                    ForEach(0..<5, id: \.self) { index in
-                                        Image(.burgue)
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .frame(width: geometry.size.width/20)
-                                            .background {
-                                                Image(.batataFrita)
-                                                    .resizable()
-                                                    .aspectRatio(contentMode: .fit)
-                                                    .offset(x: geometry.size.width/40, y: -geometry.size.height/80)
+                                ZStack {
+                                        VStack(spacing: 15) {
+                                            ForEach(0..<10) { index in
+                                                Snack()
+                                                    .frame(width: 30, height: 30)
                                             }
-                                            .background(
-                                                GeometryReader { geo in
-                                                    Color.clear
-                                                        .onAppear {
-                                                            let origin = geo.frame(in: .global).origin
-                                                            DispatchQueue.main.async {
-                                                                burguerPositions[index + 1] = origin
-                                                            }
-                                                        }
-                                                }
-                                            )
+                                        }
                                     }
-                                }
                                 .frame(maxWidth: .infinity, alignment: .leading)
 
                             }
