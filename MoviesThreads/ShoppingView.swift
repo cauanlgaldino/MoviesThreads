@@ -165,7 +165,7 @@ struct ShoppingView: View {
                 VStack {
                     if !moviesVM.fans.isEmpty {
                         ForEach(moviesVM.fans) { fan in
-                            FanView(fan: fan, size: geometry.size)
+                            FanView(fan: fan, now: moviesVM.now, size: geometry.size)
                         }
                     }
                 }

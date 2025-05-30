@@ -35,6 +35,7 @@ class MovieSessionViewModel: ObservableObject {
     @Published var exhibitionTime: TimeInterval = 0
     
     @Published var demonstratorStatus: DemonstratorStatus = .aguardandoFas
+    @Published var now = Date()
     @Published var fansInSession: Int = 0 {
         didSet {
             if fansInSession == capacity {
@@ -63,6 +64,9 @@ class MovieSessionViewModel: ObservableObject {
         
         let demonstrator = Demonstrator(moviesVM: self)
         demonstrator.start()
+        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            self.now = Date()
+        }
     }
     
     func markFanNameAsUsed(_ name: String) {
