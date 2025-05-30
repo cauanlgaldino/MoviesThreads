@@ -191,38 +191,26 @@ struct ShoppingView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                 .padding(.leading, +geometry.size.width/20)
 
-                // so pra saber onde fica os logs
-//                HStack {
-//                    Rectangle()
-//                    Rectangle()
-//                    Rectangle()
-//
-//                }
                 LogsView(size: geometry.size, moviesVM: moviesVM)
-//                .frame(height: geometry.size.height * 0.2)
-//                .frame(maxHeight: .infinity, alignment: .bottom)
-
 
                 Button {
                     showingCreateFanSheet = true
                 } label: {
                     VStack(spacing: -4) {
                         Text("Adicionar Fã")
-                            .font(.headline)
-                            .foregroundColor(.white)
+                            .font(.custom("PixelifySans-Semibold", size: 20))
                             .fontWeight(.medium)
                         Text("＋")
-                            .font(.title)
+                            .font(.custom("PixelifySans-Semibold", size: 20))
                             .fontWeight(.semibold)
-                            .foregroundColor(.white)
                     }
                     .padding(.vertical, 8)
                     .padding(.horizontal, 24)
-                    .background(Color.red)
+                    .background(Color.red.mix(with: .white, by: 0.05))
                     .cornerRadius(10)
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.black, lineWidth: 3)
+                            .stroke(Color.black.mix(with: .white, by: 0.3), lineWidth: 4)
                     )
                     .shadow(radius: 10)
                 }
