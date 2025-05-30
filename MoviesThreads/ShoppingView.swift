@@ -192,7 +192,6 @@ struct ShoppingView: View {
                 .padding(.leading, +geometry.size.width/20)
 
                 LogsView(size: geometry.size, moviesVM: moviesVM)
-
                 Button {
                     showingCreateFanSheet = true
                 } label: {
