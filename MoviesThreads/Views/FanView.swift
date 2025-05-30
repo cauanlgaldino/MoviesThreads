@@ -10,7 +10,7 @@ import Foundation
 
 struct FanView: View {
     @ObservedObject var fan: Fan
-    @State private var now = Date()
+    let now: Date
     let size: CGSize
     var body: some View {
             HStack {
@@ -29,7 +29,7 @@ struct FanView: View {
                         }
                         
                     }
-                    
+                    .minimumScaleFactor(0.5)
                     .padding(8)
                 }
                 .frame(width: size.width/18, height: size.height/15)
@@ -37,12 +37,6 @@ struct FanView: View {
                 Image(fan.id)
                     .resizable()
                     .frame(width: size.width/20, height: size.height/12)
-            }
-            
-            .onAppear {
-                Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-                    now = Date() // força o redraw a cada segundo
-                }
             }
     }
     
@@ -59,13 +53,13 @@ struct FanView: View {
         }
         
         if fan.status == .lanchando || fan.status == .assistindo {
-            return Int(max(ceil(timeLeft), 0))
+            return Int(max((timeLeft), 0))
         } else {
-            return Int(max(floor(timeLeft), 0))
+            return Int(max((timeLeft), 0))
         }
     }
 }
 
 #Preview {
-    FanView(fan: Fan(id: "Zico", snackTime: 5, moviesVM: MovieSessionViewModel(capacity: 5, exhibitionTime: 5)), size: CGSize(width: 1512, height: 982))
+    FanView(fan: Fan(id: "Zico", snackTime: 5, moviesVM: MovieSessionViewModel(capacity: 5, exhibitionTime: 5)), now: Date(), size: CGSize(width: 1512, height: 982))
 }

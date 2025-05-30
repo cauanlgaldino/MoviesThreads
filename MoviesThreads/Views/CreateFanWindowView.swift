@@ -61,8 +61,8 @@ struct CreateFanWindowView: View {
             }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Salvar") {
-                    if !selectedFanName.isEmpty && snackTime > 0 {
-                        onAddFan(selectedFanName, snackTime)
+                    if !selectedFanName.isEmpty && Int(snackTimeString) ?? 0 > 0 {
+                        onAddFan(selectedFanName, Int(snackTimeString) ?? 0)
                         dismiss()
                     } else {
                         print("Por favor, selecione um nome e um tempo de lanche válido.")

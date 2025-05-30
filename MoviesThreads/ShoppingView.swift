@@ -167,7 +167,7 @@ struct ShoppingView: View {
 
                 ForEach(Array(moviesVM.fans.enumerated()), id: \.element.id) { index, fan in
                     let chair = chairId(for: index)
-                    FanView(fan: fan, size: geometry.size)
+                    FanView(fan: fan, now: moviesVM.now, size: geometry.size)
                         .position(
                             x: getChairPosition(of: chair).x - 45,
                             y: getChairPosition(of: chair).y - 52
