@@ -9,7 +9,6 @@ struct ShoppingView: View {
     @State private var showingCreateFanSheet = false
     
     @State private var chairPositions: [Int : CGPoint] = [:]
-    //    @State private var burguerPositions: [Int : CGPoint] = [:]
     @State var beingEated: [Bool] = Array(repeating: false, count: 10)
     @State private var queuePositions: [Int : CGPoint] = [:]
     @State private var snackPositions: [Int : CGPoint] = [:]
