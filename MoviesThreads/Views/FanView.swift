@@ -45,8 +45,6 @@ struct FanView: View {
         
         switch fan.status {
         case .lanchando:
-            print(fan.id)
-            print(fan.snackTime)
             timeLeft = fan.endSnackTime.timeIntervalSince(now)
         case .assistindo:
             timeLeft = fan.endMovieTime.timeIntervalSince(now)
