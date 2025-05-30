@@ -13,7 +13,15 @@ struct FanView: View {
     let now: Date
     let size: CGSize
     var body: some View {
-            HStack {
+        VStack(spacing: 0) {
+            Button {
+                fan.moviesVM.removeFan(fan)
+            } label: {
+                Text("-")
+                    .font(.system(size: size.width/120))
+            }
+            .buttonStyle(.automatic)
+            HStack(spacing: 5) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 11.75)
                         .fill(.timeBackground).opacity(0.58)
@@ -33,11 +41,22 @@ struct FanView: View {
                     .padding(8)
                 }
                 .frame(width: size.width/18, height: size.height/15)
-               
-                Image(fan.id)
-                    .resizable()
-                    .frame(width: size.width/20, height: size.height/12)
+                
+                if fan.id == "Romário" {
+                    Image("Romario")
+                        .resizable()
+                        .frame(width: size.width/20, height: size.height/12)
+                } else if fan.id == "Falcão" {
+                    Image("Falcao")
+                        .resizable()
+                        .frame(width: size.width/20, height: size.height/12)
+                } else {
+                    Image(fan.id)
+                        .resizable()
+                        .frame(width: size.width/20, height: size.height/12)
+                }
             }
+        }
     }
     
     func getTimeLeft(fan: Fan) -> Int {
