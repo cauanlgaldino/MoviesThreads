@@ -106,33 +106,33 @@ struct ShoppingView: View {
 
                 // barracas
                 HStack {
-
-                    VStack(spacing: -geometry.size.height/10) {
+                    VStack(spacing: -geometry.size.height/7){
                         Image(.barracaNova)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: geometry.size.width/6, height: geometry.size.height/2)
-                            .overlay {
-                                ZStack {
-                                        VStack(spacing: 15) {
-                                            ForEach(0..<10) { index in
-                                                Snack()
-                                                    .frame(width: 30, height: 30)
-                                            }
-                                        }
-                                    }
-                                .frame(maxWidth: .infinity, alignment: .leading)
 
-                            }
-                            .padding(.top, -geometry.size.height/20)
 
 
                         Image(.barracaNova)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: geometry.size.width/6, height: geometry.size.height/2)
+
+
 
                     }
+                    .overlay {
+                        GeometryReader { geo in
+                            VStack(spacing: -25) {
+                                ForEach(0..<10) { index in
+                                    Snack(proxy: geo) // ou qualquer proporção
+                                }
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                    }
+                    .padding(.top, -geometry.size.height/20)
                     .padding(.trailing, -geometry.size.width/35)
 
                 }
