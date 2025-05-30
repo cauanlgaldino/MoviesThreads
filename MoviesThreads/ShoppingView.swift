@@ -114,9 +114,6 @@ struct ShoppingView: View {
                     }
                     .padding(.trailing, -32)
                     .padding(.top, -48)
-                    .overlay {
-                        //                        Image(.provisorio)
-                    }
 
                     VStack(spacing: -geometry.size.height/10) {
                         Image(.barracaNova)
@@ -161,6 +158,7 @@ struct ShoppingView: View {
                             .frame(width: geometry.size.width/6, height: geometry.size.height/2)
 
                     }
+                    .padding(.trailing, -geometry.size.width/35)
 
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
@@ -338,7 +336,7 @@ struct LayoutConstants {
 
 #Preview {
     ShoppingView(capacity: 3, exibitionTime: 10)
-        .frame(width: 1512/1.25, height: 982/1.25)
+        .frame(width: 1512/2, height: 982/2)
 
 }
 
