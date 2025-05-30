@@ -1,32 +1,25 @@
-//
-//  ShoppingView.swift
-//  MoviesThreads
-//
-//  Created by Yane dos Santos on 27/05/25.
-//
-
 import SwiftUI
 import Foundation
 
 struct ShoppingView: View {
     let initialCapacity: Int
     let initialExhibitionTime: Int
-
+    
     @ObservedObject var moviesVM: MovieSessionViewModel
     @State private var showingCreateFanSheet = false
-
+    
     @State private var chairPositions: [Int : CGPoint] = [:]
-    @State private var burguerPositions: [Int : CGPoint] = [:]
+    //    @State private var burguerPositions: [Int : CGPoint] = [:]
     @State var beingEated: [Bool] = Array(repeating: false, count: 10)
     @State private var queuePositions: [Int : CGPoint] = [:]
-
+    @State private var snackPositions: [Int : CGPoint] = [:]
+    
     init(capacity: Int, exibitionTime: Int) {
         self.initialCapacity = capacity
         self.initialExhibitionTime = exibitionTime
         self.moviesVM = MovieSessionViewModel(capacity: capacity, exhibitionTime: exibitionTime)
     }
-
-
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -34,15 +27,15 @@ struct ShoppingView: View {
                     .resizable()
                     .scaledToFill()
                     .frame(width: geometry.size.width)
-
+                
                 VStack(spacing: 0) {
                     Image(.pele)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: geometry.size.width/3)
                         .padding()
-
-
+                    
+                    
                     HStack {
                         ForEach(0..<5, id: \.self) { index in
                             Image(.chairBrown)
@@ -55,7 +48,7 @@ struct ShoppingView: View {
                                             .onAppear {
                                                 let midX = geo.frame(in: .global).midX
                                                 let midY = geo.frame(in: .global).midY
-
+                                                
                                                 DispatchQueue.main.async {
                                                     chairPositions[index + 1] = CGPoint(x: midX, y: midY)
                                                 }
@@ -64,7 +57,7 @@ struct ShoppingView: View {
                                 )
                         }
                     }
-
+                    
                     HStack {
                         ForEach(5..<11, id: \.self) { index in
                             Image(.chairBrown)
@@ -77,7 +70,7 @@ struct ShoppingView: View {
                                             .onAppear {
                                                 let midX = geo.frame(in: .global).midX
                                                 let midY = geo.frame(in: .global).midY
-
+                                                
                                                 DispatchQueue.main.async {
                                                     chairPositions[index + 1] = CGPoint(x: midX, y: midY)
                                                 }
@@ -103,30 +96,30 @@ struct ShoppingView: View {
                         .opacity(0.8)
                 }
                 .frame(maxHeight: .infinity, alignment: .top)
-
-                // barracas
+                
+                
                 HStack {
                     VStack(spacing: -geometry.size.height/7){
                         Image(.barracaNova)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: geometry.size.width/6, height: geometry.size.height/2)
-
-
-
+                        
+                        
                         Image(.barracaNova)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: geometry.size.width/6, height: geometry.size.height/2)
-
-
-
                     }
                     .overlay {
                         GeometryReader { geo in
                             VStack(spacing: -25) {
                                 ForEach(0..<10) { index in
-                                    Snack(proxy: geo) // ou qualquer proporção
+                                    Snack(proxy: geo, index: index) { reportedIndex, position in
+                                        DispatchQueue.main.async {
+                                            snackPositions[reportedIndex] = position
+                                        }
+                                    }
                                 }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -134,24 +127,23 @@ struct ShoppingView: View {
                     }
                     .padding(.top, -geometry.size.height/20)
                     .padding(.trailing, -geometry.size.width/35)
-
+                    
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-
+                
                 ForEach(Array(moviesVM.fans.enumerated()), id: \.element.id) { index, fan in
-                    let chair = chairId(for: index)
                     FanView(fan: fan, now: moviesVM.now, size: geometry.size)
                         .position(
-                            x: getChairPosition(of: chair).x - 45,
-                            y: getChairPosition(of: chair).y - 52
+                            getPosition(for: fan, index: index)
                         )
+                        .animation(.easeInOut(duration: 1.0), value: fan.status)
                 }
-                // fila para o cinema
+                
                 HStack {
                     VStack(alignment: .leading) {
                         ForEach(5..<10, id: \.self) { index in
                             Rectangle()
-                                .fill(.black)
+                                .fill(.clear)
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: geometry.size.width/13)
                                 .background(
@@ -160,18 +152,19 @@ struct ShoppingView: View {
                                             .onAppear {
                                                 let origin = geo.frame(in: .global).origin
                                                 DispatchQueue.main.async {
-                                                    queuePositions[index + 1] = origin
+                                                    // Ajuste para o centro da área da fila
+                                                    queuePositions[index + 1] = CGPoint(x: origin.x + geo.size.width / 2, y: origin.y + geo.size.height / 2)
                                                 }
                                             }
                                     }
                                 )
                         }
                     }
-
+                    
                     VStack(alignment: .leading) {
                         ForEach(0..<5, id: \.self) { index in
                             Rectangle()
-                                .fill(.black)
+                                .fill(.clear)
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: geometry.size.width/13)
                                 .background(
@@ -180,7 +173,8 @@ struct ShoppingView: View {
                                             .onAppear {
                                                 let origin = geo.frame(in: .global).origin
                                                 DispatchQueue.main.async {
-                                                    queuePositions[index + 1] = origin
+                                                    // Ajuste para o centro da área da fila
+                                                    queuePositions[index + 1] = CGPoint(x: origin.x + geo.size.width / 2, y: origin.y + geo.size.height / 2)
                                                 }
                                             }
                                     }
@@ -190,9 +184,9 @@ struct ShoppingView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                 .padding(.leading, +geometry.size.width/20)
-
+                
                 LogsView(size: geometry.size, moviesVM: moviesVM)
-
+                
                 Button {
                     showingCreateFanSheet = true
                 } label: {
@@ -217,7 +211,8 @@ struct ShoppingView: View {
                 .buttonStyle(.plain)
                 .frame(height: geometry.size.height * 0.5)
                 .frame(maxHeight: .infinity, alignment: .bottom)
-                .offset(x: -10)
+                .offset(x: -12, y: -5)
+                .keyboardShortcut(.defaultAction)
             }
             .sheet(isPresented: $showingCreateFanSheet) {
                 CreateFanWindowView(
@@ -231,55 +226,53 @@ struct ShoppingView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
-        .onAppear {
-            printChairsPosition()
-        }
     }
-    func printChairsPosition() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            let sortedKeys = chairPositions.keys.sorted()
-            for key in sortedKeys {
-                if let position = chairPositions[key] {
-                    print("Chair \(key): \(position)")
-                }
-            }
-        }
-    }
-
-    func printBurguerPosition() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            let sortedKeys = burguerPositions.keys.sorted()
-            for key in sortedKeys {
-                if let position = burguerPositions[key] {
-                    print("Chair \(key): \(position)")
-                }
-            }
-        }
-
-    }
-
-    func printQueuePosition() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            let sortedKeys = queuePositions.keys.sorted()
-            for key in sortedKeys {
-                if let position = queuePositions[key] {
-                    print("Queue \(key): \(position)")
-                }
-            }
-        }
-
-    }
-
+    
     func getQueuePosition(of queueCount: Int) -> CGPoint? {
         return queuePositions[queueCount]
     }
-
+    
     func getChairPosition(of chairCount: Int) -> CGPoint {
         return chairPositions[chairCount] ?? CGPoint.zero
     }
-
+    
+    func getPosition(for fan: Fan, index: Int) -> CGPoint {
+        switch fan.status {
+        case .fila:
+            let fansInQueue = moviesVM.fans.filter { $0.status == .fila }.sorted(by: { $0.id < $1.id })
+            if let fanIndexInQueue = fansInQueue.firstIndex(where: { $0.id == fan.id }) {
+                let queuePositionIndex = fanIndexInQueue + 1
+                if let queuePos = queuePositions[queuePositionIndex] {
+                    return queuePos
+                }
+            }
+            return CGPoint(x: -100, y: -100)
+            
+        case .esperando, .assistindo:
+            let fansInRoom = moviesVM.fans.filter { $0.status == .esperando || $0.status == .assistindo }.sorted(by: { $0.id < $1.id })
+            if let fanIndexInRoom = fansInRoom.firstIndex(where: { $0.id == fan.id }) {
+                let chairPositionIndex = fanIndexInRoom + 1
+                if let chairPos = chairPositions[chairPositionIndex] {
+                    return CGPoint(x: chairPos.x - 45, y: chairPos.y - 52)
+                }
+            }
+            return CGPoint(x: -100, y: -100)
+            
+        case .lanchando:
+            let fansSnacking = moviesVM.fans.filter { $0.status == .lanchando }.sorted(by: { $0.id < $1.id })
+            if let fanIndexInSnack = fansSnacking.firstIndex(where: { $0.id == fan.id }) {
+                let snackPositionIndex = fanIndexInSnack // Indexa a partir de 0
+                if let snackPos = snackPositions[snackPositionIndex] {
+                    return snackPos
+                }
+            }
+            
+            return CGPoint(x: -100, y: -100)
+        }
+    }
+    
     func chairId(for index: Int) -> Int {
-        return index + 1 // Ou alguma lógica mais complexa
+        return index + 1
     }
 }
 
@@ -301,8 +294,5 @@ struct LayoutConstants {
 #Preview {
     ShoppingView(capacity: 3, exibitionTime: 10)
         .frame(width: 1512/2, height: 982/2)
-
+    
 }
-
-
-

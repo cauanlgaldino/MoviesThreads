@@ -65,6 +65,7 @@ struct GlobalWindowView: View {
                     .buttonStyle(.borderedProminent)
                     .padding(.top)
                     .disabled(Int(capacityString) == nil || Int(capacityString)! <= 0 || Int(durationString) == nil || Int(durationString)! <= 0)
+                    .keyboardShortcut(.defaultAction)
                 }
                 .padding()
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)

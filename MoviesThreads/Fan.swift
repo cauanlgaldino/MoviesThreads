@@ -91,8 +91,6 @@ class Fan: Thread, Identifiable, ObservableObject {
     
     func fanGoesToSnack() {
         
-
-        
         let newEndSnackTime = Date().addingTimeInterval(snackTime)
         
         DispatchQueue.main.async { [unowned self] in

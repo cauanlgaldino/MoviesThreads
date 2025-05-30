@@ -13,7 +13,7 @@ struct FanView: View {
     let now: Date
     let size: CGSize
     var body: some View {
-            HStack {
+        HStack (spacing: 0){
                 ZStack {
                     RoundedRectangle(cornerRadius: 11.75)
                         .fill(.timeBackground).opacity(0.58)
@@ -23,14 +23,14 @@ struct FanView: View {
                         if fan.status == .lanchando || fan.status == .assistindo {
                             Text("Resta: \(getTimeLeft(fan: fan))s")
                                 .font(.system(size: size.width/120))
+                                .monospaced()
                         } else {
                             Text("Passou: \(getTimeLeft(fan: fan))s")
                                 .font(.system(size: size.width/120))
+                                .monospaced()
                         }
                         
                     }
-                    .minimumScaleFactor(0.5)
-                    .padding(8)
                 }
                 .frame(width: size.width/18, height: size.height/15)
                
