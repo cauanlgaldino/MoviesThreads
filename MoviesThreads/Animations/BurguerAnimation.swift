@@ -50,8 +50,8 @@ struct PotatosAnimation: ViewModifier {
 struct MigalhasAnimation: ViewModifier {
 
     func body(content: Content) -> some View {
-        let randomOffsetX1 = CGFloat.random(in: -150...150)
-        let randomOffsetX2 = CGFloat.random(in: -80 ... -50)
+        let randomOffsetX1 = CGFloat.random(in: -50...50)
+        let randomOffsetY = CGFloat.random(in: -30 ... 10)
         let migalheSize = CGFloat.random(in: 0.5...1.5)
         let migalhaOpacity = Double.random(in: 0.7...1)
 
@@ -71,8 +71,8 @@ struct MigalhasAnimation: ViewModifier {
 
                 }
                 KeyframeTrack(\.offsetY) {
-                    CubicKeyframe(randomOffsetX2, duration: 0.2)
-                    CubicKeyframe(-randomOffsetX2/3, duration: 0.2)
+                    CubicKeyframe(randomOffsetY, duration: 0.2)
+                    CubicKeyframe(-randomOffsetY/3, duration: 0.2)
                     CubicKeyframe(10, duration: 0.2)
 
                 }
