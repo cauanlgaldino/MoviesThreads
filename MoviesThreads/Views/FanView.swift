@@ -14,13 +14,16 @@ struct FanView: View {
     let size: CGSize
     var body: some View {
         VStack(spacing: 0) {
+
             Button {
                 fan.moviesVM.removeFan(fan)
             } label: {
-                Text("-")
-                    .font(.system(size: size.width/120))
+                Image(systemName: "minus.circle.fill")
+                    .foregroundColor(.red)
+                    .font(.title2)
             }
-            .buttonStyle(.automatic)
+            .buttonStyle(.plain)
+            .disabled(!fan.alive)
             HStack(spacing: 5) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 11.75)
@@ -31,14 +34,14 @@ struct FanView: View {
                         if fan.status == .lanchando || fan.status == .assistindo {
                             Text("Resta: \(getTimeLeft(fan: fan))s")
                                 .font(.system(size: size.width/120))
+                                .monospaced()
                         } else {
                             Text("Passou: \(getTimeLeft(fan: fan))s")
                                 .font(.system(size: size.width/120))
+                                .monospaced()
                         }
                         
                     }
-                    .minimumScaleFactor(0.5)
-                    .padding(8)
                 }
                 .frame(width: size.width/18, height: size.height/15)
                 

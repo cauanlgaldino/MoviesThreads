@@ -23,6 +23,10 @@ class Demonstrator: Thread {
     }
     
     func waitUntilRoomFullAndPlayMovie() {
+        DispatchQueue.main.async { [unowned self] in
+            moviesVM.appendRoomLog("🎬 Demonstrador: Aguardando fãs.")
+        }
+        
         sessionReady.wait()
         
         DispatchQueue.main.async { [unowned self] in
