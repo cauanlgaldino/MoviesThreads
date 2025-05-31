@@ -14,13 +14,16 @@ struct FanView: View {
     let size: CGSize
     var body: some View {
         VStack(spacing: 0) {
+
             Button {
                 fan.moviesVM.removeFan(fan)
             } label: {
-                Text("-")
-                    .font(.system(size: size.width/120))
+                Image(systemName: "minus.circle.fill")
+                    .foregroundColor(.red)
+                    .font(.title2)
             }
-            .buttonStyle(.automatic)
+            .buttonStyle(.plain)
+            .disabled(!fan.alive)
             HStack(spacing: 5) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 11.75)

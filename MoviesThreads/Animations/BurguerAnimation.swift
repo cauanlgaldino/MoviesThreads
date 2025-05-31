@@ -76,11 +76,7 @@ struct MigalhasAnimation: ViewModifier {
                     CubicKeyframe(10, duration: 0.2)
 
                 }
-
-
             }
-
-
     }
 }
 
